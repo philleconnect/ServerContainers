@@ -1,0 +1,28 @@
+#Options for creating users / groups:
+#Entry for Users (required):
+dn: ou=Users,dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+objectClass: organizationalUnit
+ou: Users
+
+#Entry for Groups (required):
+dn: ou=Groups,dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+objectClass: organizationalUnit
+ou: Groups
+
+#Entry for a new user (optional, smbldap_useradd preferred after samba installation):
+dn: uid=username,ou=Users,dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: username
+sn: SurName
+givenName: FirstName
+cn: Real Name
+displayName: Real Name
+uidNumber: 10000
+gidNumber: 5000
+userPassword: password
+gecos: Real Name
+loginShell: /bin/bash
+homeDirectory: /home/username
+ 

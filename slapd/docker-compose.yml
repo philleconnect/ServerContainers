@@ -1,0 +1,8 @@
+version: '2'
+services:
+  slapd:
+    build: .
+    ports:
+     - "388:389"
+    hostname: ldap17.gp.local
+    container_name: ldap17
