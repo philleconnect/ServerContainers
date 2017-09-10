@@ -39,6 +39,8 @@ services:
       SLAPD_DOMAIN0: lokal
       SLAPD_DOMAIN1: slapd
 #    tty: true
+    volumes:
+      - schoolconnect_admin_mysql:/var/lib/ldap
 
   schoolconnect_admin:
     build: schoolconnect_admin/
@@ -62,10 +64,13 @@ services:
 #    tty: true
     volumes:
 #      - /home/dirk/Schule/IT/PhilleConnect/docker/var/admin_mysql/:/var/lib/mysql/
-      - admin_mysql:/var/lib/mysql/
+      - schoolconnect_admin_mysql:/var/lib/mysql/
+      - schoolconnect_admin_config:/var/www/html/config/
 
 volumes:
-  admin_mysql:
+  schoolconnect_admin_mysql:
+  schoolconnect_admin_config:
+  schoolconnect_ldap:
 
 networks:
   lokal:
