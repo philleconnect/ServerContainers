@@ -9,12 +9,12 @@ services:
     ports:
      - "389:389"
     networks:
-     - lokal
+     - schoolconnect
     env_file:
      - ./settings.env
     environment:
 #      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: lokal
+      SLAPD_DOMAIN0: schoolconnect
       SLAPD_DOMAIN1: slapd
 #    tty: true
 
@@ -24,19 +24,19 @@ services:
     # 'dpkg-reconfigure slapd' hangs when a domain with an underscore _ is used
     # (which is unfortunately docker-compose default behavior)
     # so an alias is necessary if no custom (separately started) network shall be uses:
-     - "slapd:slapd.lokal"
+     - "slapd:slapd.schoolconnect"
     ports:
      - "82:80"
     container_name: php_ldap_admin
     hostname: php_ldap_admin
 #    domainname: php_ldap_admin.local
     networks:
-     - lokal
+     - schoolconnect
     env_file:
      - ./settings.env
     environment:
 #      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: lokal
+      SLAPD_DOMAIN0: schoolconnect
       SLAPD_DOMAIN1: slapd
 #    tty: true
     volumes:
@@ -48,18 +48,18 @@ services:
     # 'dpkg-reconfigure slapd' hangs when a domain with an underscore _ is used
     # (which is unfortunately docker-compose default behavior)
     # so an alias is necessary if no custom (separately started) network shall be uses:
-     - "slapd:slapd.lokal"
+     - "slapd:slapd.schoolconnect"
     ports:
      - "81:80"
     container_name: schoolconnect_admin
     hostname: schoolconnect_admin
     networks:
-     - lokal
+     - schoolconnect
     env_file:
      - ./settings.env
     environment:
 #      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: lokal
+      SLAPD_DOMAIN0: schoolconnect
       SLAPD_DOMAIN1: slapd
 #    tty: true
     volumes:
@@ -73,4 +73,4 @@ volumes:
   schoolconnect_ldap:
 
 networks:
-  lokal:
+  schoolconnect:

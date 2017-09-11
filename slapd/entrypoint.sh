@@ -86,16 +86,18 @@ sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
 
+cat /root/smbFolders >> /etc/samba/smb.conf
+
 smbpasswd -w $SLAPD_PASSWORD
 
 
 # Getting it up and insert adminuser:
 # -----------------------------------
-service slapd start # TODO: Is there a better way?
-smbldap-useradd -a adminuser
-smbldap-passwd $SLAPD_PASSWORD
-service slapd stop
-killall slapd
+#service slapd start # TODO: Is there a better way?
+#smbldap-useradd -a adminuser
+#smbldap-passwd $SLAPD_PASSWORD
+#service slapd stop
+#killall slapd
 
 slapd -d 32768
 #exec "$@"

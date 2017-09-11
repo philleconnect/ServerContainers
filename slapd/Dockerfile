@@ -30,6 +30,7 @@ COPY samba_indices.ldif /root/
 COPY smbldap.conf /etc/smbldap-tools/
 COPY smbldap_bind.conf /etc/smbldap-tools/
 COPY smbconfadd /root/
+COPY smbFolders /root/
 COPY entrypoint.sh /entrypoint.sh
 
 EXPOSE 389
