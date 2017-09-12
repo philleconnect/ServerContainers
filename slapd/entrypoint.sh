@@ -90,6 +90,7 @@ cat /root/smbFolders >> /etc/samba/smb.conf
 
 smbpasswd -w $SLAPD_PASSWORD
 
+#smbldap-populate -u 10000 -g 10000
 
 # Getting it up and insert adminuser:
 # -----------------------------------
@@ -99,5 +100,6 @@ smbpasswd -w $SLAPD_PASSWORD
 #service slapd stop
 #killall slapd
 
-slapd -d 32768
+
+#slapd -d 32768
 #exec "$@"
