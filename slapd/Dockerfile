@@ -10,10 +10,9 @@ USER root
 
 RUN groupadd -r openldap && useradd -r -g openldap openldap
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends expect nano nmap procps # TODO: rauswerfen wenn fertig
-RUN apt-get install -y --no-install-recommends ldap-utils slapd
-RUN apt-get install -y --no-install-recommends samba smbldap-tools # dpkg-dev
+RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap procps # TODO: rauswerfen wenn fertig
+RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd
+RUN apt-get update && apt-get install -y --no-install-recommends samba smbldap-tools # dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -22,6 +21,7 @@ RUN apt-get install -y --no-install-recommends samba smbldap-tools # dpkg-dev
 RUN ulimit -n 8192
 
 COPY debconf_slapd /root/
+COPY debconf_libnss-ldap /root/
 COPY add_user.ldif /root/
 COPY schema_convert.conf /root/
 # since it is not in /usr/share/doc/samba/examples/LDAP/ in docker:

@@ -22,6 +22,10 @@ if [[ -z "$SLAPD_ORGANIZATION" ]]; then
         SLAPD_ORGANIZATION='My School'
 fi
 
+# Start Samba-Server:
+# -------------------
+service samba start
+
 # ------------------------------------
 # Install the slapd (openLDAP) server:
 # ------------------------------------
@@ -40,11 +44,21 @@ dpkg-reconfigure slapd
 
 chown -R openldap:openldap /var/lib/ldap/ /var/run/slapd/
 
-#service slapd start
-#ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-#service slapd stop
-#killall slapd
-slapadd -F /etc/ldap/slapd.d -l /root/add_user.ldif
+service slapd start
+ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+service slapd stop
+killall slapd
+#slapadd -F /etc/ldap/slapd.d -l /root/add_user.ldif
+
+# ---------------------
+# configure libnss-ldap
+# ---------------------
+
+sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/debconf_libnss-ldap
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/debconf_libnss-ldap
+sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/debconf_libnss-ldap
+debconf-set-selections /root/debconf_libnss-ldap
+dpkg-reconfigure libnss-ldap
 
 # ------------------------------
 # setup the connection to samba:
@@ -76,7 +90,7 @@ sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap_bind.conf
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap_bind.conf
 sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap_bind.conf
 service slapd start # TODO: Is there a better way?
-smbldap-populate $SLAPD_PASSWORD
+smbldap-populate $SLAPD_PASSWORD -u 10000 -g 10000
 service slapd stop
 killall slapd
 
@@ -90,16 +104,22 @@ cat /root/smbFolders >> /etc/samba/smb.conf
 
 smbpasswd -w $SLAPD_PASSWORD
 
-#smbldap-populate -u 10000 -g 10000
-
 # Getting it up and insert adminuser:
 # -----------------------------------
-#service slapd start # TODO: Is there a better way?
+service slapd start # TODO: Is there a better way?
 #smbldap-useradd -a adminuser
 #smbldap-passwd $SLAPD_PASSWORD
-#service slapd stop
-#killall slapd
+#add necessary groups:
+smbldap-groupadd -a teachers
+smbldap-groupadd -a students
+#add users to groups:
+#smbldap-groupmod -m "username,username" "groupname"
+#remove users from groups
+#smbldap-groupmod -x "username,username" "groupname"
+service slapd stop
+killall slapd
 
-
-#slapd -d 32768
+# Start slapd in foreground:
+# --------------------------
+slapd -d 32768
 #exec "$@"
