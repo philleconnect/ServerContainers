@@ -44,11 +44,6 @@ dpkg-reconfigure slapd
 
 chown -R openldap:openldap /var/lib/ldap/ /var/run/slapd/
 
-service slapd start
-ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-service slapd stop
-killall slapd
-#slapadd -F /etc/ldap/slapd.d -l /root/add_user.ldif
 
 # ---------------------
 # configure libnss-ldap
@@ -59,6 +54,7 @@ sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/debconf_libnss-ldap
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/debconf_libnss-ldap
 debconf-set-selections /root/debconf_libnss-ldap
 dpkg-reconfigure libnss-ldap
+#apt-get install libnss-ldap
 
 # ------------------------------
 # setup the connection to samba:
@@ -68,6 +64,15 @@ dpkg-reconfigure libnss-ldap
 sed -i "s|passwd:         compat|passwd:         compat ldap|g" /etc/nsswitch.conf
 sed -i "s|group:          compat|group:          compat ldap|g" /etc/nsswitch.conf
 sed -i "s|shadow:         compat|shadow:         compat ldap|g" /etc/nsswitch.conf
+
+sed -i "s/password        [success=1 user_unknown=ignore default=die]     pam_ldap.so use_authtok try_first_pass/password        [success=1 user_unknown=ignore default=die]     pam_ldap.so try_first_pass/g" /etc/pam.d/common-password
+echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
+
+service slapd start
+ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+service slapd stop
+killall slapd
+#slapadd -F /etc/ldap/slapd.d -l /root/add_user.ldif
 
 # installation of samba-schema:
 # -----------------------------
@@ -118,6 +123,9 @@ smbldap-groupadd -a students
 #smbldap-groupmod -x "username,username" "groupname"
 service slapd stop
 killall slapd
+
+#Optionally make sure homedirs are created on login: (TODO: Does this work?)
+# echo -e 'session required\t\t\tpam_mkhomedir.so' >> /etc/pam.d/common-session
 
 # Start slapd in foreground:
 # --------------------------

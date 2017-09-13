@@ -10,9 +10,13 @@ USER root
 
 RUN groupadd -r openldap && useradd -r -g openldap openldap
 
-RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap procps # TODO: rauswerfen wenn fertig
-RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd
-RUN apt-get update && apt-get install -y --no-install-recommends samba smbldap-tools # dpkg-dev
+#RUN apt-get update
+# apt-get update &&
+RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap procps
+# TODO: rauswerfen wenn fertig
+RUN apt-get install -y --no-install-recommends ldap-utils slapd libnss-ldap libpam-ldap
+RUN apt-get install -y --no-install-recommends samba smbldap-tools
+# dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
