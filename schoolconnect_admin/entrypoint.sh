@@ -21,4 +21,8 @@ sed -i "s|ldap_basedn|dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0|g" /var/www/html/setup
 sed -i "s|ldap_admindn|cn=admin|g" /var/www/html/setup/ldap.php
 sed -i "s|ldap_hostname|slapd|g" /var/www/html/setup/ldap.php
 
+#openssl genrsa -out /etc/nginx/privkey.pem 2048
+#openssl req -new -x509 -key /etc/nginx/privkey.pem -out /etc/nginx/cacert.pem -days 36500
+# TODO: generate keys on build as soon as we are going stable
+
 nginx -g 'daemon off;'

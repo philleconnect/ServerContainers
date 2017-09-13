@@ -24,8 +24,11 @@ server {
 
 	# SSL configuration
 	#
-	# listen 443 ssl default_server;
-	# listen [::]:443 ssl default_server;
+	listen 443 ssl default_server;
+	listen [::]:443 ssl default_server;
+	
+	ssl_certificate /etc/nginx/cacert.pem;
+	ssl_certificate_key /etc/nginx/privkey.pem;
 	#
 	# Note: You should disable gzip for SSL traffic.
 	# See: https://bugs.debian.org/773332
@@ -49,6 +52,10 @@ server {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ =404;
+		
+		# ssl:
+		fastcgi_param HTTPS on;
+		fastcgi_param HTTP_SCHEME https;
 	}
 
 	# pass PHP scripts to FastCGI server

@@ -51,6 +51,7 @@ services:
      - "slapd:slapd.schoolconnect"
     ports:
      - "81:80"
+     - "444:443"
     container_name: schoolconnect_admin
     hostname: schoolconnect_admin
     networks:
