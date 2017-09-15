@@ -22,9 +22,13 @@ COPY cacert.pem /etc/nginx/
 RUN tar -xzf /root/schoolconnect_admin.tar.gz -C /var/www/html
 RUN chown -R www-data /var/www/html/
 
+COPY htaccess /
+COPY build.sh /
+RUN ./build.sh
+
 EXPOSE 80
 
 COPY entrypoint.sh /
 
 #CMD ["nginx", "-g", "daemon off;"]
-CMD ["/entrypoint.sh"]
+CMD ["./entrypoint.sh"]
