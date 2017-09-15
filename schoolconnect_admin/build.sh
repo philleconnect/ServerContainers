@@ -25,9 +25,9 @@ sed -i "s|ldap_hostname|slapd|g" /var/www/html/setup/ldap.php
 #openssl req -new -x509 -key /etc/nginx/privkey.pem -out /etc/nginx/cacert.pem -days 36500
 # TODO: generate keys on build as soon as we are going stable
 
-if [ ! -f /var/www/html/setup/id_rsa ]; then
-    ssh-keygen -t rsa -N "" -f /var/www/html/setup/id_rsa
+if [ ! -f /var/www/html/config/id_rsa ]; then
+    ssh-keygen -t rsa -N "" -f /var/www/html/config/id_rsa
 fi
-cat htaccess >> /var/www/html/setup/.htaccess
+cat htaccess >> /var/www/html/config/.htaccess
 
 # TODO: secure the private key it with a .htacess-file, make the pub key downloadable from GUI
