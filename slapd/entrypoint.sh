@@ -70,6 +70,7 @@ echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc
 
 service slapd start
 ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+ldapmodify -Y EXTERNAL -H ldapi:/// -f limit.ldif
 service slapd stop
 killall slapd
 #slapadd -F /etc/ldap/slapd.d -l /root/add_user.ldif

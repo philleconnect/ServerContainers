@@ -27,6 +27,7 @@ RUN ulimit -n 8192
 COPY debconf_slapd /root/
 COPY debconf_libnss-ldap /root/
 COPY add_user.ldif /root/
+COPY limit.ldif /root/
 COPY schema_convert.conf /root/
 # since it is not in /usr/share/doc/samba/examples/LDAP/ in docker:
 COPY samba.schema.gz /root/
