@@ -25,21 +25,16 @@ sed -i "s|ldap_hostname|ldap|g" /var/www/html/setup/ldap.php
 #openssl req -new -x509 -key /etc/nginx/privkey.pem -out /etc/nginx/cacert.pem -days 36500
 # TODO: generate keys on build as soon as we are going stable
 
+# generate new rsa-key to connect to ipfire via ssh (only if not exists):
 if [ ! -f /var/www/html/config/id_rsa ]; then
     ssh-keygen -t rsa -N "" -f /var/www/html/config/id_rsa
 fi
-cat htaccess >> /var/www/html/config/.htaccess
-sed -i "s|root|philleconnect|g" /var/www/html/config/id_rsa.pub
+chmod =400 /var/www/html/config/id_rsa
+mv -f htaccess /var/www/html/config/.htaccess
 
-# TODO: secure the private key it with a .htacess-file, make the pub key downloadable from GUI
+sed -i "s|root|philleconnect|g" /var/www/html/config/id_rsa.pub
+# TODO: make the pub key downloadable from GUI
 
 #==============================================
-
-#chown -R mysql:mysql /var/lib/mysql
-chmod =400 /var/www/html/config/id_rsa
-
-# start services:
-service mysql start
-service php7.0-fpm start
 
 nginx -g 'daemon off;'

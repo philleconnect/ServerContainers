@@ -23,8 +23,6 @@ RUN tar -xzf /root/schoolconnect_admin.tar.gz -C /var/www/html
 RUN chown -R www-data /var/www/html/
 
 COPY htaccess /
-COPY build.sh /
-RUN ./build.sh
 
 EXPOSE 80
 

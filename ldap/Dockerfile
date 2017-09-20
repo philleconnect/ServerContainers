@@ -29,13 +29,15 @@ COPY add_user.ldif /root/
 COPY limit.ldif /root/
 COPY schema_convert.conf /root/
 # since it is not in /usr/share/doc/samba/examples/LDAP/ in docker:
-COPY samba.schema.gz /root/
+COPY samba.schema.gz /etc/ldap/schema/
 COPY samba_indices.ldif /root/
 COPY ldapns.schema /etc/ldap/schema/
-COPY build.sh /build.sh
 COPY entrypoint.sh /entrypoint.sh
 
-RUN ./build.sh
+RUN zcat /etc/ldap/schema/samba.schema.gz > /etc/ldap/schema/samba.schema
+RUN mkdir /tmp/ldif_output
+RUN slaptest -f /root/schema_convert.conf -F /tmp/ldif_output/
+RUN cp "/tmp/ldif_output/cn=config/cn=schema/cn={14}samba.ldif" "/etc/ldap/slapd.d/cn=config/cn=schema"
 
 EXPOSE 389
 EXPOSE 636

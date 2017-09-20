@@ -26,10 +26,10 @@ COPY smbldap.conf /etc/smbldap-tools/
 COPY smbldap_bind.conf /etc/smbldap-tools/
 COPY smbconfadd /root/
 COPY smbFolders /root/
-COPY build.sh /build.sh
 COPY entrypoint.sh /entrypoint.sh
 
-RUN ./build.sh
+RUN echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
+RUN cat /root/smbFolders >> /etc/samba/smb.conf
 
 EXPOSE 137
 EXPOSE 138

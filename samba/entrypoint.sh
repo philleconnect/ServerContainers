@@ -53,7 +53,6 @@ sed -i "s|group:          compat|group:          compat ldap|g" /etc/nsswitch.
 sed -i "s|shadow:         compat|shadow:         compat ldap|g" /etc/nsswitch.conf
 
 sed -i "s/password        [success=1 user_unknown=ignore default=die]     pam_ldap.so use_authtok try_first_pass/password        [success=1 user_unknown=ignore default=die]     pam_ldap.so try_first_pass/g" /etc/pam.d/common-password
-echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
 
 echo "configuring smb.conf..."
 sed -i "s/SLAPD_DOMAIN0/$SLAPD_DOMAIN0/g" /root/smbconfadd
@@ -62,17 +61,16 @@ sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
 
-cat /root/smbFolders >> /etc/samba/smb.conf
-
 smbpasswd -w $SLAPD_PASSWORD
 
 # Getting it up and insert adminuser:
 # -----------------------------------
 echo "adding groups to samba..."
+service nmbd start
 service smbd start
 smbldap-groupadd -a teachers
 smbldap-groupadd -a students
-service smbd stop
+#service smbd stop
 #add users to groups:
 #smbldap-useradd -a testuser
 
@@ -80,5 +78,5 @@ service smbd stop
 
 echo "configuration finished, starting now..."
 #service nmbd start
-smbd -i
-while true; do sleep 1; done # hang for debugging...
+#smbd -i
+while true; do sleep 1; done # hack to keep the docker running...
