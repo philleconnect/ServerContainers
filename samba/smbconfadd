@@ -1,0 +1,11 @@
+passdb backend = ldapsam:ldap://ldap
+ldap suffix = dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+ldap user suffix = ou=users
+ldap group suffix = ou=groups
+ldap machine suffix = ou=computers
+ldap idmap suffix = ou=Idmap
+ldap admin dn = cn=admin,dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+#ldap ssl = start tls
+ldap ssl = no
+ldap passwd sync = yes
+add machine script = /usr/sbin/smbldap-useradd -t 0 -w "%u"

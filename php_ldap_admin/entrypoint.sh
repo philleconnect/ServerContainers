@@ -23,12 +23,6 @@ sed -i "s|$servers->setValue('server','base',array('dc=example,dc=com'));|$serve
 sed -i "s|$servers->setValue('login','bind_id','cn=admin,dc=example,dc=com');|$servers->setValue('login','bind_id','cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0');|g" /etc/phpldapadmin/config.php
 sed -i "s|// $config->custom->appearance['hide_template_warning'] = false;|$config->custom->appearance['hide_template_warning'] = true;|g" /etc/phpldapadmin/config.php
 
-sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/debconf_libpam
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/debconf_libpam
-sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/debconf_libpam
-debconf-set-selections /root/debconf_libpam
-dpkg-reconfigure -f noninteractive libpam-ldap >/dev/null 2>&1
-
 # check connection, TODO: raus werfen!
 #ldapsearch -x -h slapd -b "cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0"
 

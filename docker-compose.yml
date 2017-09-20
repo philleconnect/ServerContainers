@@ -1,68 +1,66 @@
 version: '2'
 services:
 
-  slapd:
-    build: slapd/
-    container_name: slapd
-    hostname: slapd
-#    domainname: slapd.local
+  ldap:
+    build: ldap/
+    container_name: ldap
+    hostname: ldap
     ports:
      - "389:389"
     networks:
      - schoolconnect
     env_file:
      - ./settings.env
-    environment:
-#      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: schoolconnect
-      SLAPD_DOMAIN1: slapd
-#    tty: true
 
   php_ldap_admin:
     build: php_ldap_admin/
     links:
+     - "ldap:ldap.schoolconnect"
+    ports:
+     - "89:80"
+    container_name: php_ldap_admin
+    hostname: php_ldap_admin
     # 'dpkg-reconfigure slapd' hangs when a domain with an underscore _ is used
     # (which is unfortunately docker-compose default behavior)
     # so an alias is necessary if no custom (separately started) network shall be uses:
-     - "slapd:slapd.schoolconnect"
-    ports:
-     - "82:80"
-    container_name: php_ldap_admin
-    hostname: php_ldap_admin
-#    domainname: php_ldap_admin.local
     networks:
      - schoolconnect
     env_file:
      - ./settings.env
-    environment:
-#      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: schoolconnect
-      SLAPD_DOMAIN1: slapd
-#    tty: true
     volumes:
-      - schoolconnect_admin_mysql:/var/lib/ldap
+      - schoolconnect_admin_mysql:/var/lib/phpldap
+
+  samba:
+    build: samba/
+    links:
+     - "ldap:ldap.schoolconnect"
+    container_name: samba
+    hostname: samba
+    ports:
+     - "137:137"
+     - "138:138"
+     - "139:139"
+    networks:
+     - schoolconnect
+    env_file:
+     - ./settings.env
+    volumes:
+     - ./mount/samba:/home
 
   schoolconnect_admin:
     build: schoolconnect_admin/
     links:
-    # 'dpkg-reconfigure slapd' hangs when a domain with an underscore _ is used
-    # (which is unfortunately docker-compose default behavior)
-    # so an alias is necessary if no custom (separately started) network shall be uses:
-     - "slapd:slapd.schoolconnect"
+     - "ldap:ldap.schoolconnect"
+     - "samba:samba.schoolconnect"
     ports:
-     - "81:80"
-     - "444:443"
+     - "87:80"
+     - "447:443"
     container_name: schoolconnect_admin
     hostname: schoolconnect_admin
     networks:
      - schoolconnect
     env_file:
      - ./settings.env
-    environment:
-#      SLAPD_DOMAIN0: docker_default
-      SLAPD_DOMAIN0: schoolconnect
-      SLAPD_DOMAIN1: slapd
-#    tty: true
     volumes:
 #      - /home/dirk/Schule/IT/PhilleConnect/docker/var/admin_mysql/:/var/lib/mysql/
       - schoolconnect_admin_mysql:/var/lib/mysql/

@@ -1,0 +1,20 @@
+slapd   slapd/internal/generated_adminpw password SLAPD_PASSWORD
+slapd   slapd/internal/adminpw password SLAPD_PASSWORD
+slapd   slapd/password2 password SLAPD_PASSWORD
+slapd   slapd/password1 password SLAPD_PASSWORD
+#slapd   slapd/password_mismatch note
+slapd   slapd/backend select HDB
+#slapd   slapd/dump_database     select  when needed
+#slapd   slapd/dump_database_destdir     string  /var/backups/slapd-VERSION
+#slapd   slapd/upgrade_slapcat_failure   error
+slapd   shared/organization string SLAPD_ORGANIZATION
+#slapd   slapd/invalid_config    boolean true
+#slapd   slapd/move_old_database boolean true
+# TODO: Bei auskommentierter Zeile läuft der entrypoint durch, aber dann ist kein Login möglich. So muss slapd.conf getötet werden.
+slapd   slapd/domain string SLAPD_DOMAIN1.SLAPD_DOMAIN0
+#slapd   slapd/no_configuration  boolean false
+# Do you want the database to be removed when slapd is purged?
+#slapd   slapd/purge_database    boolean false
+# Potentially unsafe slapd access control configuration
+#slapd   slapd/unsafe_selfwrite_acl      note
+#slapd   slapd/ppolicy_schema_needs_update       select  abort installation
