@@ -35,9 +35,6 @@ COPY ldapns.schema /etc/ldap/schema/
 COPY entrypoint.sh /entrypoint.sh
 
 RUN zcat /etc/ldap/schema/samba.schema.gz > /etc/ldap/schema/samba.schema
-RUN mkdir /tmp/ldif_output
-RUN slaptest -f /root/schema_convert.conf -F /tmp/ldif_output/
-RUN cp "/tmp/ldif_output/cn=config/cn=schema/cn={14}samba.ldif" "/etc/ldap/slapd.d/cn=config/cn=schema"
 
 EXPOSE 389
 EXPOSE 636

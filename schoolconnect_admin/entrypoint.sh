@@ -30,7 +30,7 @@ if [ ! -f /var/www/html/config/id_rsa ]; then
     ssh-keygen -t rsa -N "" -f /var/www/html/config/id_rsa
 fi
 chmod =400 /var/www/html/config/id_rsa
-mv -f htaccess /var/www/html/config/.htaccess
+mv -f /htaccess /var/www/html/config/.htaccess
 
 sed -i "s|root|philleconnect|g" /var/www/html/config/id_rsa.pub
 # TODO: make the pub key downloadable from GUI
