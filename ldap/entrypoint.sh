@@ -47,20 +47,21 @@ sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/add_user.ldif
 mkdir /tmp/ldif_output
 slaptest -f /root/schema_convert.conf -F /tmp/ldif_output/
 cp "/tmp/ldif_output/cn=config/cn=schema/cn={14}samba.ldif" "/etc/ldap/slapd.d/cn=config/cn=schema"
+chown openldap: '/etc/ldap/slapd.d/cn=config/cn=schema/cn={14}samba.ldif'
 
 echo "installing .ldif-files..."
 #service slapd start, we need it to listen to ldapi (unix command) as well:
 /usr/sbin/slapd -h "ldap:/// ldapi:///"
-ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
 #cd /tmp/ldif_output/
 #ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldif_output/cn\=config.ldif
-ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/cn\=samba.ldif
+#ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/cn\=samba.ldif
 ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
+ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+while true; do sleep 1; done # hang for debugging...
 #service slapd stop
 SLAPD_PID=$(cat /run/slapd/slapd.pid)
 kill -15 $SLAPD_PID
-#while true; do sleep 1; done # hang for debugging...
 killall -15 slapd
 while [ -e /proc/$SLAPD_PID ]; do sleep 0.1; done # wait until slapd is terminated
 

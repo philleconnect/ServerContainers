@@ -62,9 +62,10 @@ sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /et
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
 
 smbpasswd -w $SLAPD_PASSWORD
+smbldap-populate -u 10000 -g 10000
 
-# Getting it up and insert adminuser:
-# -----------------------------------
+# Getting it up and insert groups:
+# --------------------------------
 echo "adding groups to samba..."
 service nmbd start
 service smbd start

@@ -12,9 +12,9 @@ RUN groupadd -r openldap && useradd -r -g openldap openldap
 
 #RUN apt-get update
 # apt-get update &&
-RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap procps
+RUN apt-get update && apt-get install -y --no-install-recommends expect nano vim nmap procps
 # TODO: rauswerfen wenn fertig
-RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd
+RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd libpam-ldap libnss-ldap
 # dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
