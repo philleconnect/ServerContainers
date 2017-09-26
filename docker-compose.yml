@@ -5,15 +5,20 @@ services:
     build: ldap/
     container_name: ldap
     hostname: ldap
+    restart: always
     ports:
      - "389:389"
     networks:
      - schoolconnect
     env_file:
      - ./settings.env
+    volumes:
+      - schoolconnect_ldap_db:/var/lib/ldap
+      - schoolconnect_ldap_config:/etc/ldap/slapd.d
 
   php_ldap_admin:
     build: php_ldap_admin/
+    restart: always
     links:
      - "ldap:ldap.schoolconnect"
     ports:
@@ -32,6 +37,7 @@ services:
 
   samba:
     build: samba/
+    restart: always
     links:
      - "ldap:ldap.schoolconnect"
     container_name: samba
@@ -49,6 +55,7 @@ services:
 
   schoolconnect_admin:
     build: schoolconnect_admin/
+    restart: always
     links:
      - "ldap:ldap.schoolconnect"
      - "samba:samba.schoolconnect"
@@ -69,7 +76,8 @@ services:
 volumes:
   schoolconnect_admin_mysql:
   schoolconnect_admin_config:
-  schoolconnect_ldap:
+  schoolconnect_ldap_db:
+  schoolconnect_ldap_config:
 
 networks:
   schoolconnect:
