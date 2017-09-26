@@ -22,25 +22,7 @@ if [[ -z "$SLAPD_ORGANIZATION" ]]; then
         SLAPD_ORGANIZATION='My School'
 fi
 
-# ---------------------
-# configure libnss-ldap
-# ---------------------
-
-echo "configuring slapd and libnss-ldap..."
-sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/debconf_libnss-ldap
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/debconf_libnss-ldap
-sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/debconf_libnss-ldap
-debconf-set-selections /root/debconf_libnss-ldap
-dpkg-reconfigure libnss-ldap
-#apt-get install libnss-ldap
-
-sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap_bind.conf
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap_bind.conf 
-sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap_bind.conf
-
-sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap.conf
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf 
-sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap.conf
+#sleep 100
 
 # -------------------------------
 # setup the connection to sldapd:
@@ -60,9 +42,38 @@ sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
 sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
+# TODO: noch nicht reboot-fest: Wird mit jedem Containerstart eingefügt!
+
+# ---------------------
+# configure libnss-ldap
+# ---------------------
+
+echo "configuring slapd and libnss-ldap..."
+sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/debconf_libnss-ldap
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/debconf_libnss-ldap
+sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/debconf_libnss-ldap
+debconf-set-selections /root/debconf_libnss-ldap
+dpkg-reconfigure libnss-ldap
+# TODO: for some reason the debconf-settings don't get into this file, so we need to place the settings and copy it there manually:
+sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/libnss-ldap.conf
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /root/libnss-ldap.conf
+sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/libnss-ldap.conf
+cp -f /root/libnss-ldap.conf /etc/
+
+sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap_bind.conf
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap_bind.conf 
+sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap_bind.conf
+
+sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap.conf
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf 
+sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap.conf
+
+
+#while true; do sleep 1; done # hang for debugging...
 
 smbpasswd -w $SLAPD_PASSWORD
 smbldap-populate -u 10000 -g 10000
+smbldap-passwd root -p $SLAPD_PASSWORD
 
 # Getting it up and insert groups:
 # --------------------------------
@@ -78,6 +89,6 @@ smbldap-groupadd -a students
 #=======================================================
 
 echo "configuration finished, starting now..."
-#service nmbd start
-#smbd -i
+#service smbd stop
+#smbd -F
 while true; do sleep 1; done # hack to keep the docker running...

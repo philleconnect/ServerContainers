@@ -1,27 +1,27 @@
- 
+
 [SchulTausch]
-	path = /home/SchulTausch
-	writeable = yes
+    path = /home/schoolExchange
+    writeable = yes
 
 [RaumTausch]
-	path = /home/RaumTausch
-	writeable = yes
+    path = /home/roomExchange
+    writeable = yes
 
 [SchulVorlagenSchueler]
-	path = /home/SchulVorlagen
-	writeable = no
+    path = /home/schoolTemplate
+    writeable = no
 
 [SchulVorlagenLehrer]
-	path = /home/SchulVorlagen
-	valid users = @teachers
-	writable = yes
+    path = /home/schoolTemplate
+    valid users = @teachers
+    writable = yes
 
 [LehrerTausch]
-	path = /home/LehrerTausch
-	writable = yes
-	valid users = @teachers
+    path = /home/teacherExchange
+    writable = yes
+    valid users = @teachers
 
 [LehrerVorlagen]
-	path = /home/LehrerVorlagen
-	writable = no
-	valid users = @teachers
+    path = /home/schoolTemplate
+    writable = no
+    valid users = @teachers
