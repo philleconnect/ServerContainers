@@ -2,4 +2,3 @@ dn: cn=config
 changetype: modify
 replace: olcSizeLimit
 olcSizeLimit: 10000
- 

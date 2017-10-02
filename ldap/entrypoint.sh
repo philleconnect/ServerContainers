@@ -69,18 +69,18 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
 ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
 #service slapd stop
-SLAPD_PID=$(cat /run/slapd/slapd.pid)
-kill -15 $SLAPD_PID
-killall -15 slapd
-while [ -e /proc/$SLAPD_PID ]; do sleep 0.1; done # wait until slapd is terminated
+#SLAPD_PID=$(cat /run/slapd/slapd.pid)
+#kill -15 $SLAPD_PID
+#killall -15 slapd
+#while [ -e /proc/$SLAPD_PID ]; do sleep 0.1; done # wait until slapd is terminated
 
 # ===============================================================
 
 
 # Start slapd in foreground:
 # --------------------------
-echo "configuration finished, starting now..."
-slapd -d 32768
+#echo "configuration finished, starting now..."
+#slapd -d 32768
 #slapd -d 1
 #exec "$@"
 while true; do sleep 1; done # hang for debugging...
