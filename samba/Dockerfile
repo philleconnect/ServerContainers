@@ -31,7 +31,7 @@ COPY libnss-ldap.conf /root/
 COPY entrypoint.sh /entrypoint.sh
 
 RUN echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
-RUN cat /root/smbFolders >> /etc/samba/smb.conf
+RUN cp -f /etc/samba/smb.conf /root/smb.conf.tpl
 
 EXPOSE 137
 EXPOSE 138

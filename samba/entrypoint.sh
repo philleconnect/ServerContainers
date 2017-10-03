@@ -36,17 +36,9 @@ sed -i "s|shadow:         compat|shadow:         compat ldap|g" /etc/nsswitch.
 
 sed -i "s/password\t\[success=1 user_unknown=ignore default=die\]\tpam_ldap\.so use_authtok try_first_pass/password\t\[success=1 user_unknown=ignore default=die\]\tpam_ldap\.so try_first_pass/g" /etc/pam.d/common-password
 
-echo "configuring smb.conf..."
-sed -i "s/SLAPD_DOMAIN0/$SLAPD_DOMAIN0/g" /root/smbconfadd
-sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
-sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
-sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
-sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
-# TODO: noch nicht reboot-fest: Wird mit jedem Containerstart eingefügt!
-
-# ---------------------
-# configure libnss-ldap
-# ---------------------
+# ----------------------------------
+# configure smbldap and libnss-ldap:
+# ----------------------------------
 
 echo "configuring slapd and libnss-ldap..."
 sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /root/debconf_libnss-ldap
@@ -68,13 +60,27 @@ sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap.conf
 sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf 
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap.conf
 
-
-#while true; do sleep 1; done # hang for debugging...
-
-smbpasswd -w $SLAPD_PASSWORD
 smbldap-populate -u 10000 -g 10000
 smbldap-passwd root -p $SLAPD_PASSWORD
 
+# ----------------
+# configure samba:
+# ----------------
+
+echo "configuring smb.conf..."
+sed -i "s/SLAPD_DOMAIN0/$SLAPD_DOMAIN0/g" /root/smbconfadd
+sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
+
+cp -f /root/smb.conf.tpl /etc/samba/smb.conf
+cat /root/smbFolders >> /etc/samba/smb.conf
+sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
+sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
+sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
+sed -i 's/   read only = yes/   read only = false/g' /etc/samba/smb.conf
+
+smbpasswd -w $SLAPD_PASSWORD
+
+# --------------------------------
 # Getting it up and insert groups:
 # --------------------------------
 echo "adding groups to samba..."

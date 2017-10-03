@@ -10,14 +10,9 @@ USER root
 
 RUN groupadd -r openldap && useradd -r -g openldap openldap
 
-#RUN apt-get update
-# apt-get update &&
 RUN apt-get update && apt-get install -y --no-install-recommends expect nano vim nmap procps
 # TODO: rauswerfen wenn fertig
 RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd
-# libpam-ldap
-# libnss-ldap
-# dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -26,7 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slap
 RUN ulimit -n 8192
 
 COPY debconf_slapd /root/
-#COPY cn=samba.ldif /root/
 COPY add_user.ldif /root/
 COPY limit.ldif /root/
 COPY schema_convert.conf /root/
