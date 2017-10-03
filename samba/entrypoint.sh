@@ -76,7 +76,7 @@ cat /root/smbFolders >> /etc/samba/smb.conf
 sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
-sed -i 's/   read only = yes/   read only = false/g' /etc/samba/smb.conf
+sed -i 's/   read only = yes/   read only = no/g' /etc/samba/smb.conf
 
 smbpasswd -w $SLAPD_PASSWORD
 
