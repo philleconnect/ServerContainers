@@ -48,7 +48,13 @@ mkdir /tmp/ldif_output
 #slapcat -f /root/schema_convert.conf -F /tmp/ldif_output -n 0 | grep samba,cn=schema
 #slapcat -f /root/schema_convert.conf -F /tmp/ldif_output -n0 -H ldap:///cn={14}samba,cn=schema,cn=config -l /root/cn=samba.ldif
 slaptest -f /root/schema_convert.conf -F /tmp/ldif_output/
-cp /tmp/ldif_output/cn\=config/cn\=schema/cn\={14}samba.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema
+if [ -f /etc/ldap/slapd.d/cn\=config/cn\=schema/cn\={14}samba.ldif ]
+then
+    echo "samba.ldif already installed"
+    samba = true
+else
+    cp /tmp/ldif_output/cn\=config/cn\=schema/cn\={14}samba.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema
+fi
 chown openldap: /etc/ldap/slapd.d/cn\=config/cn\=schema/*.ldif
 
 # ----------------------------------
@@ -61,9 +67,11 @@ echo "installing .ldif-files..."
 #cd /tmp/ldif_output/
 #ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldif_output/cn\=config.ldif
 ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
-ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
+if [ not $samba ]
+then
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
+fi
 ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-
 while true; do sleep 1; done # keep container running for debugging...
 
 #service slapd stop
