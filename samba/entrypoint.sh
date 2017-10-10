@@ -61,7 +61,7 @@ sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap.conf
 
 smbldap-populate -u 10000 -g 10000
-smbldap-passwd root -p $SLAPD_PASSWORD
+#smbldap-passwd root -p $SLAPD_PASSWORD
 
 # ----------------
 # configure samba:

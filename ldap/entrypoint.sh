@@ -1,4 +1,13 @@
 #!/bin/bash
+#if [ -f /var/backups/*ldapdb/DB_EXISTS ]
+if [ -f /var/lib/ldap/DB_EXISTS ]
+then
+        firstRun=false
+        echo "Database exists, so I am using the old one WITH THE OLD CREDENTIALS FOR DOMAIN AND PASSWORD"
+else
+        firstRun=true
+        echo "No old Database found, so I am initializing an empty one with the given credentials."
+fi
 
 # check if environment variables are set with -e option:
 if [[ -z "$SLAPD_PASSWORD" ]]; then
@@ -35,7 +44,16 @@ debconf-set-selections /root/debconf_slapd
 
 chown -R openldap:openldap /var/lib/ldap/ /var/run/slapd/
 
-dpkg-reconfigure slapd
+if $firstRun
+then
+        dpkg-reconfigure slapd
+else
+        # Get Backup into place:
+        dpkg-reconfigure slapd
+        rm /var/lib/ldap/*
+        mv /var/backups/*ldapdb/* /var/lib/ldap/
+        rm -r /var/backups/*ldapdb
+fi
 
 # -----------------------------
 # installation of samba-schema:
@@ -48,13 +66,7 @@ mkdir /tmp/ldif_output
 #slapcat -f /root/schema_convert.conf -F /tmp/ldif_output -n 0 | grep samba,cn=schema
 #slapcat -f /root/schema_convert.conf -F /tmp/ldif_output -n0 -H ldap:///cn={14}samba,cn=schema,cn=config -l /root/cn=samba.ldif
 slaptest -f /root/schema_convert.conf -F /tmp/ldif_output/
-if [ -f /etc/ldap/slapd.d/cn\=config/cn\=schema/cn\={14}samba.ldif ]
-then
-    echo "samba.ldif already installed"
-    samba = true
-else
-    cp /tmp/ldif_output/cn\=config/cn\=schema/cn\={14}samba.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema
-fi
+cp /tmp/ldif_output/cn\=config/cn\=schema/cn\={14}samba.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema
 chown openldap: /etc/ldap/slapd.d/cn\=config/cn\=schema/*.ldif
 
 # ----------------------------------
@@ -67,11 +79,14 @@ echo "installing .ldif-files..."
 #cd /tmp/ldif_output/
 #ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldif_output/cn\=config.ldif
 ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
-if [ not $samba ]
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
+if $firstRun
 then
-    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
+        ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
 fi
-ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+
+touch /var/lib/ldap/DB_EXISTS
+
 while true; do sleep 1; done # keep container running for debugging...
 
 #service slapd stop

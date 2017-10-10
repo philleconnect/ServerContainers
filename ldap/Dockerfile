@@ -10,8 +10,6 @@ USER root
 
 RUN groupadd -r openldap && useradd -r -g openldap openldap
 
-RUN apt-get update && apt-get install -y --no-install-recommends expect nano vim nmap procps
-# TODO: rauswerfen wenn fertig
 RUN apt-get update && apt-get install -y --no-install-recommends ldap-utils slapd
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -25,7 +23,7 @@ COPY add_user.ldif /root/
 COPY limit.ldif /root/
 COPY schema_convert.conf /root/
 #RUN zcat /usr/share/doc/samba-doc/examples/LDAP/samba.schema.gz > /etc/ldap/schema/samba.schema
-# since it is not in /usr/share/doc/samba/examples/LDAP/ in docker:
+# since samba.schema.gz is not in /usr/share/doc/samba/examples/LDAP/ in docker:
 COPY samba.schema.gz /etc/ldap/schema/
 RUN zcat /etc/ldap/schema/samba.schema.gz > /etc/ldap/schema/samba.schema
 COPY samba_indices.ldif /root/
