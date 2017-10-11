@@ -11,7 +11,7 @@ And the client software is not yet published, but will follow soon, so hang on..
 * As modular as possible: You don't like a thing / need it different / want it to work with X / ... : Go ahead, make it work your way!
 
 ## Basic architecture
-* LDAP-Server for authentication (supplied as docker-container), open to attach your authentications needs: LDAP is THE standart, but no fun to get up, so we did the job for you.
+* LDAP-Server for authentication (supplied as docker-container), open to attach your authentications needs: LDAP is the standard that almost any software can talk, but it's no fun to get up, so we did the job for you.
 * Server-as-code, based on Docker
 * All basics, and only the basics, for your School Network: Monitor Control, local cloud storage, share- and template storage Remote Control, Internet Control and Screen lock.
 * Integration with open-source Firewall Solution "IpFire"
@@ -20,7 +20,7 @@ And the client software is not yet published, but will follow soon, so hang on..
 
 # Who can use this?
 
-## THIS SOFTWARE IS STILL IN ALPHA-STATE, PLEASE DON'T SEND BUG-REPORTS YET, THINGS ARE NOT WORKING YET!!!
+## THIS SOFTWARE IS STILL IN BETA-STATE, EXPECT BUGS AND MISSING DOCUMENTATION !!!
 
 If you are aware of this feel free to give it a try.
 But expect quite a few changes in the next weeks and months, we hope to go stable by christmas 2017!
