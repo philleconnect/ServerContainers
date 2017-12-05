@@ -22,6 +22,6 @@
     valid users = @teachers
 
 [LehrerVorlagen]
-    path = /home/schoolTemplate
+    path = /home/teacherTemplate
     writable = no
     valid users = @teachers
