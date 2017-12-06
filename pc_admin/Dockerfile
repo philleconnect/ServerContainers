@@ -22,6 +22,7 @@ COPY privkey.pem /etc/nginx/
 COPY cacert.pem /etc/nginx/
 RUN tar -xzf /root/pc_admin.tar.gz -C /var/www/html
 RUN chown -R www-data /var/www/html/
+RUN chmod =777 /home/
 RUN echo "www-data ALL=NOPASSWD: /usr/bin/wakeonlan" >> /etc/sudoers
 
 COPY htaccess /
