@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #chown -R mysql:mysql /var/lib/mysql
+chmod 0777 /home/*
 
 # start services:
 service mysql start
@@ -48,4 +49,5 @@ sed -i "s|root|philleconnect|g" /var/www/html/config/id_rsa.pub
 
 #==============================================
 
+echo 'everything is prepared, starting server for pc_admin'
 nginx -g 'daemon off;'
