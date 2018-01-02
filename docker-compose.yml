@@ -3,6 +3,7 @@ services:
 
   ldap:
     build: ldap/
+    #image: philleconnect/ldap:latest
     container_name: ldap
     hostname: ldap
     restart: always
@@ -17,6 +18,7 @@ services:
 
   php_ldap_admin:
     build: php_ldap_admin/
+    #image: philleconnect/php_ldap_admin:latest
     restart: always
     links:
       - "ldap:ldap.philleconnect"
@@ -36,6 +38,7 @@ services:
 
   samba:
     build: samba/
+    #image: philleconnect/samba:latest
     restart: always
     links:
       - "ldap:ldap.philleconnect"
@@ -54,6 +57,7 @@ services:
 
   pc_admin:
     build: pc_admin/
+    #image: philleconnect/pc_admin:latest
     restart: always
     links:
       - "ldap:ldap.philleconnect"

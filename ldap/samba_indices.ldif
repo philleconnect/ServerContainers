@@ -19,4 +19,4 @@ olcDbIndex: nisMapEntry eq
 
 add: olcAccess
 olcAccess: to attrs=loginShell by dn="cn=admin,dc=samba,dc=org" write by self write by * read
-olcAccess: to attrs=sambaNTPassword,sambaLMPassword,sambaPwdLastSet,sambaPwdMustChange by dn="cn=admin,dc=ldap,dc=schoolconnect" write by self write by * none
+olcAccess: to attrs=sambaNTPassword,sambaLMPassword,sambaPwdLastSet,sambaPwdMustChange by dn="cn=admin,dc=ldap,dc=philleconnect" write by self write by * none

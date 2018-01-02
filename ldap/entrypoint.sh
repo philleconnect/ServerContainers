@@ -22,8 +22,8 @@ if [[ -z "$SLAPD_DOMAIN0" ]]; then
 fi
 if [[ -z "$SLAPD_DOMAIN1" ]]; then
         echo -n"SLAPD_DOMAIN1 not set."
-        echo -n"I am using 'slapd'"
-        SLAPD_DOMAIN1='slapd'
+        echo -n"I am using 'ldap'"
+        SLAPD_DOMAIN1='ldap'
 fi
 if [[ -z "$SLAPD_ORGANIZATION" ]]; then
         echo -n"SLAPD_ORGANIZATION not set."
