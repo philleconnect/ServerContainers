@@ -36,5 +36,6 @@ RUN cp -f /etc/samba/smb.conf /root/smb.conf.tpl
 EXPOSE 137
 EXPOSE 138
 EXPOSE 139
+EXPOSE 445
 
 CMD ["./entrypoint.sh"]

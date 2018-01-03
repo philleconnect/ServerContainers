@@ -48,6 +48,7 @@ services:
       - "137:137"
       - "138:138"
       - "139:139"
+      - "445:445"
     networks:
       - philleconnect
     env_file:
