@@ -26,6 +26,7 @@ sed -i "s|samba_hostname|PHILLECONNECT|g" /var/www/html/setup/ldap.php
 sed -i "s|sql_password|$MYSQL_PASSWORD|g" /root/setup.sh
 sed -i "s|ldap_password|$SLAPD_PASSWORD|g" /root/setup.sh
 sed -i "s|ldap_basedn|dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0|g" /root/setup.sh
+echo $HOST_NETWORK_ADRESS > /var/www/host.txt
 service nginx start
 if [ $(cat /var/www/html/config/config.txt) = "empty" ]
 then
