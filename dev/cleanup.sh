@@ -15,7 +15,7 @@ then
     docker volume rm servercontainers_philleconnect_admin_config
     docker volume rm servercontainers_philleconnect_admin_mysql
     docker volume rm servercontainers_philleconnect_ldap_db
-    echo "All docher-stuff has been deleted. You might want to execute 'git clean' as well and loose user data as well."
+    echo "All docker-stuff has been deleted. You might want to execute 'git clean -f -d' to loose all user data and uncommitted changes as well."
 else
     echo "Ok, I did't do anything, lucky you. Be careful!"
 fi
