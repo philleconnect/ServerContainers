@@ -80,10 +80,10 @@ echo "installing .ldif-files..."
 #ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldif_output/cn\=config.ldif
 ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
-if $firstRun
-then
+#if $firstRun
+#then
         ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-fi
+#fi
 
 touch /var/lib/ldap/DB_EXISTS
 
