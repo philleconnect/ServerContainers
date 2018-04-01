@@ -74,8 +74,9 @@ services:
       - ./settings.env
     volumes:
 #      - /home/dirk/Schule/IT/PhilleConnect/docker/var/admin_mysql/:/var/lib/mysql/
-      - philleconnect_admin_mysql:/var/lib/mysql/
-      - philleconnect_admin_config:/var/www/html/config/
+      # don't make tailing slashes in volumes!!!
+      - philleconnect_admin_mysql:/var/lib/mysql
+      - philleconnect_admin_config:/var/www/html/config
       - ./mount/samba:/home
 
 volumes:
