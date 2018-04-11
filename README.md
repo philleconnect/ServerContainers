@@ -1,10 +1,6 @@
 # What ist this?
 PhilleConnect is an all-new open-source next generation school network solution.
 
-!!! BETA TESTING PHASE !!!
-Not recommended for productive systems.
-And the client software is not yet published, but will follow soon, so hang on...
-
 ## Philosophy
 * as much open-souce-standards as possible
 * Server-side based on docker containers, because "Server-as-code" is better than "Server-as-Virtual-Image" or even "Server-as-black-software"
@@ -20,13 +16,8 @@ And the client software is not yet published, but will follow soon, so hang on..
 
 # Who can use this?
 
-## THIS SOFTWARE IS STILL IN BETA-STATE, EXPECT BUGS AND MISSING DOCUMENTATION !!!
-
-If you are aware of this feel free to give it a try.
-But expect quite a few changes in the next weeks and months, we hope to go stable by christmas 2017!
-
 # How can I use this?
-* Install a Linux-System to act as the Server, for examle Ubuntu 17.04 (this will work for the commands below, but works on others like debian as well if you "translate" the description below to your system)
+* Install a Linux-System to act as the Server, for example Ubuntu 17.10 (this will work for the commands below, but works on others like debian as well if you "translate" the description below to your system)
 * Type `sudo apt-get install docker docker-compose git` to the command line. Then you have your docker host.
 * Type `git clone http://github.com/philleconnect/ServerContainers/` to get all you need to make your system build your server.
 * Edit the `settings.env` in the `ServerContainers`-directory to your needs (WARNING: Don't change after going productive!)
