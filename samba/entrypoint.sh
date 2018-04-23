@@ -72,7 +72,7 @@ sed -i "s/SLAPD_DOMAIN0/$SLAPD_DOMAIN0/g" /root/smbconfadd
 sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
 
 cp -f /root/smb.conf.tpl /etc/samba/smb.conf
-cat /root/smbFolders >> /etc/samba/smb.conf
+#cat /root/smbFolders >> /etc/samba/smb.conf
 sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
@@ -97,4 +97,5 @@ smbldap-groupadd -a students
 echo "configuration finished, starting now..."
 #service smbd stop
 #smbd -F
-while true; do sleep 1; done # hack to keep the docker running...
+#while true; do sleep 1; done # hack to keep the docker running...
+python3 /root/smbFoldersChanger.py

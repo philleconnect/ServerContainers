@@ -10,9 +10,7 @@ USER root
 
 #RUN apt-get update
 # apt-get update &&
-RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap vim
-# TODO: rauswerfen wenn fertig
-RUN apt-get update && apt-get install -y --no-install-recommends libnss-ldap libpam-ldap samba smbldap-tools
+RUN apt-get update && apt-get install -y --no-install-recommends libnss-ldap libpam-ldap samba smbldap-tools python3
 # dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -25,7 +23,8 @@ COPY debconf_libnss-ldap /root/
 COPY smbldap.conf /etc/smbldap-tools/
 COPY smbldap_bind.conf /etc/smbldap-tools/
 COPY smbconfadd /root/
-COPY smbFolders /root/
+#COPY smbFolders /root/
+COPY smbFoldersChanger.py /root/
 # TODO: for some reason debconf won't set this file right, so we need to copy it to place in entrypoint:
 COPY libnss-ldap.conf /root/
 COPY entrypoint.sh /entrypoint.sh
