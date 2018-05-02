@@ -9,7 +9,8 @@ from http import HTTPStatus
 import json
 import os
 
-conffile ='/etc/samba/smb.conf'
+conffile = '/etc/samba/smb.conf'
+
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     ''' Handler to apply samba-config-changes that are received as POST-data '''
@@ -53,15 +54,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         for d in j:
             new.write('['+d['name']+']\n')
             new.write('    path = '+d['path']+'\n')
-            if d['teachers'] and d['students']:
-                new.write('    writable = yes\n')
-            elif d['teachers'] and not d['students']:
-                new.write('    writable = yes\n')
-                new.write('    valid users = @teachers\n')
-            elif not (d['teachers']) and not (d['students']):
-                new.write('    writable = no\n')
-                new.write('    valid users = @teachers\n')
+            error = False
+            if d['writeable']:
+                new.write('    writeable = yes\n')
+            elif not d['writeable']:
+                new.write('    writeable = no\n')
             else:
+                error = True
+            if d['teachers'] and d['students']:
+                # no new line needed, but config is valid
+                pass
+            elif d['teachers'] and not d['students']:
+                new.write('    valid users = @teachers\n')
+            elif not (d['teachers']) and (d['students']):
+                new.write('    valid users = @students\n')
+            else:
+                error = True
+            if error:
                 raise InputError('not all values are declared, please reconfigure samba-folders (might be in inconsistent state at the moment)')
         new.write("# end ExchangeFolders; DON'T CHANGE MANUALLY!\n")
         new.close()
