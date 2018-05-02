@@ -47,12 +47,12 @@ chown -R openldap:openldap /var/lib/ldap/ /var/run/slapd/
 if $firstRun
 then
         dpkg-reconfigure slapd
-else
-        # Get Backup into place:
-        dpkg-reconfigure slapd
-        rm /var/lib/ldap/*
-        mv /var/backups/*ldapdb/* /var/lib/ldap/
-        rm -r /var/backups/*ldapdb
+#else
+#        # Get Backup into place:
+#        dpkg-reconfigure slapd
+#        rm /var/lib/ldap/*
+#        mv /var/backups/*ldapdb/* /var/lib/ldap/
+#        rm -r /var/backups/*ldapdb
 fi
 
 # -----------------------------
