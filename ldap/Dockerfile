@@ -29,6 +29,7 @@ RUN zcat /etc/ldap/schema/samba.schema.gz > /etc/ldap/schema/samba.schema
 COPY samba_indices.ldif /root/
 COPY ldapns.schema /etc/ldap/schema/
 COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 389
 EXPOSE 636
