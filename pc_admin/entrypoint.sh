@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #chown -R mysql:mysql /var/lib/mysql
+chmod 0777 /home
 chmod 0777 /home/*
 
 # start services:

@@ -23,7 +23,6 @@ COPY privkey.pem /etc/nginx/
 COPY cacert.pem /etc/nginx/
 RUN tar -xzf /root/pc_admin.tar.gz -C /var/www/html
 RUN chown -R www-data /var/www/html/
-RUN chmod 0777 /home/
 RUN echo "www-data ALL=NOPASSWD: /usr/bin/wakeonlan" >> /etc/sudoers
 # TODO: choose a better way for this:
 RUN echo "www-data ALL=NOPASSWD: /bin/chmod, /bin/chown" >> /etc/sudoers
@@ -33,6 +32,7 @@ COPY htaccess /
 EXPOSE 80
 
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 #CMD ["nginx", "-g", "daemon off;"]
 CMD ["./entrypoint.sh"]
