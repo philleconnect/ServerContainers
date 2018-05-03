@@ -29,6 +29,8 @@ COPY smbFoldersChanger.py /root/
 COPY libnss-ldap.conf /root/
 COPY entrypoint.sh /entrypoint.sh
 
+RUN chmod 0777 /home/
+
 RUN echo "session optional        pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
 RUN cp -f /etc/samba/smb.conf /root/smb.conf.tpl
 

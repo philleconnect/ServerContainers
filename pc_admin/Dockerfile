@@ -15,6 +15,7 @@ RUN echo "mariadb-server mysql-server/root_password_again password password" | d
 RUN apt-get update && apt-get install -y --no-install-recommends nginx openssl openssh-client php-fpm php-mysql php-ldap php-ssh2 wakeonlan sudo mariadb-server wget
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+COPY index.html /var/www/html/
 COPY pc_admin.tar.gz /root/
 COPY setup.sh /root/
 COPY default /etc/nginx/sites-enabled/
