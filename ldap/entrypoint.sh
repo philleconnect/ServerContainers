@@ -80,34 +80,38 @@ chown openldap: /etc/ldap/slapd.d/cn\=config/cn\=schema/*.ldif
 # sart slapd and install ldif-files:
 # ----------------------------------
 
-#if $firstRun
-#then
-    echo "installing .ldif-files..."
+/usr/sbin/slapd -h "ldap:/// ldapi:///" #TODO: Move this intot the if below in future versions!
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif # TODO: and this as well
+if $firstRun
+then
+    echo "installing .ldif-files, since I didn't find a database yet..."
     #service slapd start, we need it to listen to ldapi (unix command) as well:
-    /usr/sbin/slapd -h "ldap:/// ldapi:///"
-    #cd /tmp/ldif_output/
-    #ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldif_output/cn\=config.ldif
-    ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
+    #/usr/sbin/slapd -h "ldap:/// ldapi:///"
+    #ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
     ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
-    ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-#fi
+    ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f  /root/add_user.ldif
+    #ldapmodify -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/samba_indices.ldif
+    #ldapmodify -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
+    #service slapd stop
+fi
+# TODO: and this:
+service slapd stop
 
 touch /var/lib/ldap/DB_EXISTS
 
 #while true; do sleep 1; done # keep container running for debugging...
 
-service slapd stop
-SLAPD_PID=$(cat /run/slapd/slapd.pid)
-kill -15 $SLAPD_PID
+#service slapd stop
+#SLAPD_PID=$(cat /run/slapd/slapd.pid)
+#kill -15 $SLAPD_PID
 #killall -15 slapd
-#while [ -e /proc/$SLAPD_PID ]; do sleep 0.1; done # wait until slapd is terminated
 
 # ===============================================================
 
 # --------------------------
 # Start slapd in foreground:
 # --------------------------
-echo "configuration finished, starting now..."
+#echo "configuration finished, starting now..."
 slapd -d 32768
 #slapd -d 1
 #exec "$@"

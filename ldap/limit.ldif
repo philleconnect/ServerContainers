@@ -1,4 +1,4 @@
-dn: cn=config
+dn: olcDatabase={-1}frontend,cn=config
 changetype: modify
 replace: olcSizeLimit
 olcSizeLimit: 10000

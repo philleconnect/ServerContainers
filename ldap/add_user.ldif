@@ -1,6 +1,7 @@
 #Options for creating users / groups:
 #Entry for Users (required):
 dn: ou=Users,dc=SLAPD_DOMAIN1,dc=SLAPD_DOMAIN0
+changetype: add
 objectClass: organizationalUnit
 ou: Users
 
