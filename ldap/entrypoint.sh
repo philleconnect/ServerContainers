@@ -80,8 +80,8 @@ chown openldap: /etc/ldap/slapd.d/cn\=config/cn\=schema/*.ldif
 # sart slapd and install ldif-files:
 # ----------------------------------
 
-if $firstRun
-then
+#if $firstRun
+#then
     echo "installing .ldif-files..."
     #service slapd start, we need it to listen to ldapi (unix command) as well:
     /usr/sbin/slapd -h "ldap:/// ldapi:///"
@@ -90,7 +90,7 @@ then
     ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/limit.ldif
     ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /root/samba_indices.ldif
     ldapadd -x -D cn=admin,dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0 -w $SLAPD_PASSWORD -f /root/add_user.ldif
-fi
+#fi
 
 touch /var/lib/ldap/DB_EXISTS
 
