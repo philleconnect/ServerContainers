@@ -1,5 +1,5 @@
 # Rechnerverwaltung
 This is the web bases administration backend and client application API of PhilleConnect.
 
-# Placeholder repository
-At the moment, this repository is a placeholder. This application is part of the Abitur 2018, so the source code will be published in may 2018.
+# How to use this?
+This requires a webserver with PHP and a MySQL/MariaDB server. To use the user account management, it requires a LDAP server. To use the internet access control, your network router must be an IPFire.
