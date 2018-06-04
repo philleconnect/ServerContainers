@@ -66,6 +66,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             error = False
             if d['writeable']:
                 newconf.append('    writeable = yes\n')
+                newconf.append('    create mask = 0666\n')
+                newconf.append('    directory mask = 0777\n')
             elif not d['writeable']:
                 newconf.append('    writeable = no\n')
             else:
