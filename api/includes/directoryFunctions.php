@@ -22,4 +22,16 @@
         }
         return rename($dir, $new);
     }
+    function fixHomedir($dir, $uid, $gid) {
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
+        chmod($dir,0777);
+        shell_exec('sudo chown '.$uid.':'.$gid.' '.$dir);
+        if (is_writeable($dir)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 ?>

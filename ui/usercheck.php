@@ -63,6 +63,15 @@
                         $ldapconn = ldap_connect(loadConfig('ldap', 'url'));
                         ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
                         $r = ldap_bind($ldapconn);
+                        # Fix folder if requested:
+                        if ((isset($_GET['fixFolder'])) && (isset($_GET['user']))) {
+                            $fixuser = ldap_search($ldapconn, loadConfig('ldap', 'usersdn').','.loadConfig('ldap', 'basedn'), 'uid='.$_GET['user']);
+                            $user = ldap_get_entries($ldapconn, $userx);
+                            //echo $user[0]['uid'][0];
+                            //echo $user[0]['uidNumber'][0];
+                            include "../api/includes/directoryFunctions.php";
+                            fixHomedir($_GET['fixFolder'], 'nobody', 'nogroup');//TODO: get apropriate uid and gid from ldap
+                        }
                         $allusers = ldap_search($ldapconn, loadConfig('ldap', 'usersdn').','.loadConfig('ldap', 'basedn'), "uid=*");
                         $users = ldap_get_entries($ldapconn, $allusers);
                         $teacherGroup = ldap_search($ldapconn, loadConfig('ldap', 'groupsdn').','.loadConfig('ldap', 'basedn'), loadConfig('ldap', 'teacherscn'));
@@ -81,7 +90,8 @@
                                 if (is_writeable($users[$i]['homedirectory'][0])) {
                                     $thisHomedir = $users[$i]['homedirectory'][0];
                                 } else {
-                                    $thisHomedir = '<span style="color:red;">'.$users[$i]['homedirectory'][0].'</span>';
+                                    $thisHomedir = '<span style="color:red;">'.$users[$i]['homedirectory'][0].'</span><br />
+                                            <a href="/ui/usercheck.php?fixFolder='.$users[$i]['homedirectory'][0].'&user='.$users[$i]['uid'][0].'">Reparieren</a>';
                                 }
                                 $thisUsercn = $users[$i]['cn'][0];
                                 for ($j=$i+1; $j<$users['count']; $j++) {
