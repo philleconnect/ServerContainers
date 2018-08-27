@@ -26,7 +26,8 @@
         if (!is_dir($dir)) {
             mkdir($dir);
         }
-        chmod($dir,0777);
+        //chmod($dir,0777);
+        shell_exec('sudo chmod 0751 '.$dir);
         shell_exec('sudo chown '.$uid.':'.$gid.' '.$dir);
         if (is_writeable($dir)) {
             return true;

@@ -39,7 +39,20 @@
     $entry['sn'] = $client_request->addaccount->sn;
     $entry['uidNumber'] = $uid;
     $entry['uid'] = $client_request->addaccount->cn;
-    if (ldap_add($ldapconn, "uid=".$client_request->addaccount->cn.", ".loadConfig('ldap', 'usersdn').','.loadConfig('ldap', 'basedn'), $entry)) {
+    // check if user already exists:
+    $allusers = ldap_search($ldapconn, loadConfig('ldap', 'usersdn').','.loadConfig('ldap', 'basedn'), "uid=*");
+    $users = ldap_get_entries($ldapconn, $allusers);
+    $exists = false;
+    for ($i=0; $i<$users['count']; $i++) {
+        if (($users[$i]['sn'][0] == $users[$j]['sn'][0]) &&
+                ($users[$i]['givenname'][0] == $users[$j]['givenname'][0]) &&
+                ($users[$i]['description'][0] == $users[$i]['description'][0])) {
+            $exists = true;
+        }
+    }
+    if ($exists) {
+        $client_response['addaccount'] = 'ERR_USER_EXISTS';
+    } else if (ldap_add($ldapconn, "uid=".$client_request->addaccount->cn.", ".loadConfig('ldap', 'usersdn').','.loadConfig('ldap', 'basedn'), $entry)) {
         if (changeConfigValue('ldap', 'lastuid', $uid)) {
             $groupentry = array();
             $groupentry['memberUid'] = $client_request->addaccount->cn;

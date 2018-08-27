@@ -251,6 +251,10 @@ var csv = {
                 this.error++;
                 document.getElementById('icon-'+this.counter).innerHTML = '<i class="f7-icons" style="color: red;">bolt_round</i>';
                 csv.multiArray[this.counter][9] = 'BOLT';
+            } else if (response.addaccount == "ERR_USER_EXISTS") {
+                this.error++;
+                document.getElementById('icon-'+this.counter).innerHTML = '<i class="f7-icons" style="color: red;">bolt_round</i>';
+                csv.multiArray[this.counter][9] = 'BOLT';
             } else if (response.addaccount == "ERR_ADD_TO_GROUP") {
                 this.error++;
                 document.getElementById('icon-'+this.counter).innerHTML = '<i class="f7-icons" style="color: red;">persons_fill</i>';
@@ -264,7 +268,7 @@ var csv = {
                 csv.multiArray[this.counter][9] = 'BOLT';
                 swal({
                     title: "Es ist ein schwerwiegender Fehler aufgetreten.",
-                    text: "WARNUNG: " + this.counter + " Nutzer wurde hinzugrfügt, jedoch konnte die User-ID nicht erhöht werden. Dies wird zu Sicherheitslücken führen, sollten Sie einen weiteren Nutzer hinzufügen! Der CSV-Import wurde abgebrochen.",
+                    text: "WARNUNG: " + this.counter + " Nutzer wurde hinzugefügt, jedoch konnte die User-ID nicht erhöht werden. Dies wird zu Sicherheitslücken führen, sollten Sie einen weiteren Nutzer hinzufügen! Der CSV-Import wurde abgebrochen.",
                     type: "error",
                 })
             } else if (response.addaccount == "ERR_CREATE_HOME" || response.addaccount == "ERR_HOME_GROUP" || response.addaccount == "ERR_HOME_USER") {
