@@ -102,7 +102,7 @@
                             <select id="year">
                                 <?php
                                     $now = date('Y');
-                                    for ($i = ($now - 150); $i <= $now; $i++) {
+                                    for ($i = $now; $i >= ($now-110); $i--) {
                                         echo '<option value="'.$i.'">'.$i.'</option>';
                                     }
                                 ?>
