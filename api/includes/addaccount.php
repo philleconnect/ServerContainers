@@ -44,9 +44,9 @@
     $users = ldap_get_entries($ldapconn, $allusers);
     $exists = false;
     for ($i=0; $i<$users['count']; $i++) {
-        if (($users[$i]['sn'][0] == $users[$j]['sn'][0]) &&
-                ($users[$i]['givenname'][0] == $users[$j]['givenname'][0]) &&
-                ($users[$i]['description'][0] == $users[$i]['description'][0])) {
+        if (($users[$i]['sn'][0] == $entry['sn']) &&
+                ($users[$i]['givenname'][0] == $entry['givenName']) &&
+                ($users[$i]['description'][0] == $entry['description'])) {
             $exists = true;
         }
     }
