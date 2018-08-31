@@ -234,12 +234,16 @@ var csv = {
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 type: 'question',
-            }).then(function() {
-                csv.import.callback = csv.import.multiCallback;
-                csv.import.counter = 0;
-                csv.import.error = 0;
-                csv.import.createHomeFolder = home;
-                csv.import.send(csv.multiArray[csv.import.counter]);
+                showLoaderOnConfirm: true,
+                preConfirm: function() {
+                    return new Promise(function(resolve) {
+                        csv.import.callback = csv.import.multiCallback;
+                        csv.import.counter = 0;
+                        csv.import.error = 0;
+                        csv.import.createHomeFolder = home;
+                        csv.import.send(csv.multiArray[csv.import.counter]);
+                    })
+                }
             })
         },
         //Callback
@@ -708,22 +712,26 @@ var csv = {
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     type: 'question',
-                }).then(function() {
-                    csv.import.callback = csv.import.multiCallback;
-                    if (csv.transit.newData.convert.length > 0) {
-                        csv.transit.convert(csv.transit.newData.convert[csv.transit.convertCounter]);
-                    } else {
-                        csv.transit.taskFinishCallback();
-                    }
-                    if (csv.transit.newData.new.length > 0) {
-                        csv.import.send(csv.transit.newData.new[csv.import.counter], document.getElementById('createhome').checked);
-                    } else {
-                        csv.transit.taskFinishCallback();
-                    }
-                    if (csv.transit.newData.delete.length > 0) {
-                        csv.transit.delete(csv.transit.newData.delete[csv.transit.deleteCounter]);
-                    } else {
-                        csv.transit.taskFinishCallback();
+                    showLoaderOnConfirm: true,
+                    preConfirm: function() {
+                        return new Promise(function(resolve) {
+                            csv.import.callback = csv.import.multiCallback;
+                            if (csv.transit.newData.convert.length > 0) {
+                                csv.transit.convert(csv.transit.newData.convert[csv.transit.convertCounter]);
+                            } else {
+                                csv.transit.taskFinishCallback();
+                            }
+                            if (csv.transit.newData.new.length > 0) {
+                                csv.import.send(csv.transit.newData.new[csv.import.counter], document.getElementById('createhome').checked);
+                            } else {
+                                csv.transit.taskFinishCallback();
+                            }
+                            if (csv.transit.newData.delete.length > 0) {
+                                csv.transit.delete(csv.transit.newData.delete[csv.transit.deleteCounter]);
+                            } else {
+                                csv.transit.taskFinishCallback();
+                            }
+                        })
                     }
                 })
             }
