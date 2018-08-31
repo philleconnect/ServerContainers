@@ -220,6 +220,7 @@ var csv = {
         counter: 0,
         error: 0,
         callback: null,
+        createHomeFolder: false,
         //Import the multidimensional array
         doMulti: function(home) {
             swal({
@@ -237,7 +238,8 @@ var csv = {
                 csv.import.callback = csv.import.multiCallback;
                 csv.import.counter = 0;
                 csv.import.error = 0;
-                csv.import.send(csv.multiArray[csv.import.counter], home);
+                csv.import.createHomeFolder = home;
+                csv.import.send(csv.multiArray[csv.import.counter]);
             })
         },
         //Callback
@@ -313,7 +315,7 @@ var csv = {
             }
         },
         //Send request
-        send: function(data, home) {
+        send: function(data) {
             if (data == null || data.length < 9 || data[9] == 'SUCCESS') {
                 if (this.counter < (csv.multiArray.length - 1)) {
                     this.counter++;
@@ -345,7 +347,7 @@ var csv = {
                     }
                 }
             } else {
-                if (home) {
+                if (this.createHomeFolder) {
                     var createHome = '1';
                 } else {
                     var createHome = '0';
