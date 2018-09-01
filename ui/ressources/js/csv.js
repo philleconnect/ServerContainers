@@ -722,7 +722,8 @@ var csv = {
                                 csv.transit.taskFinishCallback();
                             }
                             if (csv.transit.newData.new.length > 0) {
-                                csv.import.send(csv.transit.newData.new[csv.import.counter], document.getElementById('createhome').checked);
+                                csv.import.createHomeFolder = document.getElementById('createhome').checked;
+                                csv.import.send(csv.transit.newData.new[csv.import.counter]);
                             } else {
                                 csv.transit.taskFinishCallback();
                             }
