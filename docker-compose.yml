@@ -10,7 +10,7 @@ services:
     ports:
       - "389:389"
     networks:
-      - philleconnect
+      - network
     env_file:
       - ./settings.env
     volumes:
@@ -30,7 +30,7 @@ services:
     # (which is unfortunately docker-compose default behavior)
     # so an alias is necessary if no custom (separately started) network shall be uses:
     networks:
-      - philleconnect
+      - network
     env_file:
       - ./settings.env
     volumes:
@@ -50,7 +50,7 @@ services:
       - "139:139"
       - "445:445"
     networks:
-      - philleconnect
+      - network
     env_file:
       - ./settings.env
     volumes:
@@ -69,7 +69,7 @@ services:
     container_name: pc_admin
     hostname: pc_admin
     networks:
-      - philleconnect
+      - network
     env_file:
       - ./settings.env
     volumes:
@@ -85,4 +85,4 @@ volumes:
   philleconnect_ldap_db:
 
 networks:
-  philleconnect:
+  network:

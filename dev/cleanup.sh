@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "!!! WARNING !!! : This will DELETE ALL CUSTOM FILES (Databases, LDAP, ...) of this PhilleConnect-Installation!"
+echo "!!! WARNING !!! : This will DELETE ALL CUSTOM FILES (Databases, LDAP, user folders, ...) of this PhilleConnect-Installation!"
 read -r -p "Are you sure? [y/N] " response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
 then
@@ -15,6 +15,9 @@ then
     docker volume rm servercontainers_philleconnect_admin_config
     docker volume rm servercontainers_philleconnect_admin_mysql
     docker volume rm servercontainers_philleconnect_ldap_db
+    rm -r mount/samba/students/*/
+    rm -r mount/samba/teachers/*/
+    rm -r mount/samba/roomExchange/*/
     echo "All docker-stuff has been deleted. You might want to execute 'git clean -f -d' to loose all user data and uncommitted changes as well."
 else
     echo "Ok, I did't do anything, lucky you. Be careful!"
