@@ -10,11 +10,11 @@ services:
     ports:
       - "389:389"
     networks:
-      - network
+      - philleconnect
     env_file:
       - ./settings.env
     volumes:
-      - ldap_db:/var/lib/ldap
+      - philleconnect_ldap_db:/var/lib/ldap
 
   php_ldap_admin:
     build: php_ldap_admin/
@@ -30,11 +30,11 @@ services:
     # (which is unfortunately docker-compose default behavior)
     # so an alias is necessary if no custom (separately started) network shall be uses:
     networks:
-      - network
+      - philleconnect
     env_file:
       - ./settings.env
     volumes:
-      - admin_db:/var/lib/phpldap
+      - philleconnect_admin_mysql:/var/lib/phpldap
 
   samba:
     build: samba/
@@ -50,7 +50,7 @@ services:
       - "139:139"
       - "445:445"
     networks:
-      - network
+      - philleconnect
     env_file:
       - ./settings.env
     volumes:
@@ -69,20 +69,20 @@ services:
     container_name: pc_admin
     hostname: pc_admin
     networks:
-      - network
+      - philleconnect
     env_file:
       - ./settings.env
     volumes:
 #      - /home/dirk/Schule/IT/PhilleConnect/docker/var/admin_mysql/:/var/lib/mysql/
       # don't make tailing slashes in volumes!!!
-      - admin_db:/var/lib/mysql
-      - admin_config:/var/www/html/config
+      - philleconnect_admin_mysql:/var/lib/mysql
+      - philleconnect_admin_config:/var/www/html/config
       - ./mount/samba:/home
 
 volumes:
-  admin_db:
-  admin_config:
-  ldap_db:
+  philleconnect_admin_mysql:
+  philleconnect_admin_config:
+  philleconnect_ldap_db:
 
 networks:
-  network:
+  philleconnect:
