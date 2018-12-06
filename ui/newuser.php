@@ -50,11 +50,11 @@
                         <td id="cn"></td>
                     </tr>
                     <tr class="alt">
-                        <td>Vorname:</td>
+                        <td>Vorname:*</td>
                         <td><input type="text" id="givenname" oninput="parseUserName()"/></td>
                     </tr>
                     <tr>
-                        <td>Nachname:</td>
+                        <td>Nachname:*</td>
                         <td><input type="text" id="sn" oninput="parseUserName()"/></td>
                     </tr>
                     <tr class="alt">
@@ -62,11 +62,11 @@
                         <td><input type="text" id="home"/></td>
                     </tr>
                     <tr>
-                        <td>Gruppe:</td>
+                        <td>Gruppe:*</td>
                         <td><input type="radio" name="group" id="teachers" onclick="parseUserName()"/>&nbsp;Lehrer&nbsp;&nbsp;<input type="radio" name="group" id="students" onclick="parseUserName()"/>&nbsp;Schüler</td>
                     </tr>
                     <tr class="alt">
-                        <td>Klasse:</td>
+                        <td>Klasse/Kürzel:*</td>
                         <td><input type="text" id="class"/></td>
                     </tr>
                     <tr>
