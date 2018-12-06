@@ -16,6 +16,26 @@ services:
     volumes:
       - philleconnect_ldap_db:/var/lib/ldap
 
+  php_ldap_admin:
+    build: php_ldap_admin/
+    #image: philleconnect/php_ldap_admin:latest
+    restart: always
+    links:
+      - "ldap"
+    ports:
+      - "89:80"
+    container_name: php_ldap_admin
+    hostname: php_ldap_admin
+    # 'dpkg-reconfigure slapd' hangs when a domain with an underscore _ is used
+    # (which is unfortunately docker-compose default behavior)
+    # so an alias is necessary if no custom (separately started) network shall be used:
+    networks:
+      - philleconnect
+    env_file:
+      - ./settings.env
+    volumes:
+      - philleconnect_admin_mysql:/var/lib/phpldap
+
   samba:
     build: samba/
     #image: philleconnect/samba:latest
@@ -48,7 +68,6 @@ services:
     env_file:
       - ./settings.env
     volumes:
-#      - /home/dirk/Schule/IT/PhilleConnect/docker/var/admin_mysql/:/var/lib/mysql/
       # don't make tailing slashes in volumes!!!
       - philleconnect_admin_mysql:/var/lib/mysql
       - philleconnect_admin_config:/var/www/html/config
