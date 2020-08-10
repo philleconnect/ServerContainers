@@ -1,0 +1,22 @@
+[database]
+url = main_db
+user =
+password =
+name = schoolconnect
+finish = false
+
+[ldap]
+url = ldap
+password =
+basedn =
+admindn = cn=admin
+usersdn = ou=users
+groupsdn = ou=groups
+sambahostname = SCHOOLCONNECT
+finish = false
+
+[ipfire]
+url =
+port =
+password =
+finish = false

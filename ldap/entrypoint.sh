@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Function for a clean shutdown of the container
+function shutdown {
+    kill -TERM "$SLAPD_PROCESS" 2>/dev/null
+    exit
+}
+trap shutdown SIGTERM
+
 # check if it installed already (-> skipping stuff later on)
 if [ -f /var/lib/ldap/DB_EXISTS ]
 then
@@ -112,8 +119,6 @@ touch /var/lib/ldap/DB_EXISTS
 # Start slapd in foreground:
 # --------------------------
 #echo "configuration finished, starting now..."
-slapd -d 32768
-#slapd -d 1
-#exec "$@"
-
-#while true; do sleep 1; done # keep container running for debugging...
+slapd -d 32768 &
+SLAPD_PROCESS=$!
+wait $SLAPD_PROCESS

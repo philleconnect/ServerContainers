@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 MAINTAINER Dirk Winkel <it@polarwinkel.de>
 
@@ -8,29 +8,39 @@ ENV VERSION "1"
 
 USER root
 
-RUN apt-get update && apt-get install -y --no-install-recommends expect nano nmap # TODO: rauswerfen wenn fertig
-#RUN apt-get install -y --no-install-recommends apache2 php php-ldap php-ssh2 wakeonlan # php-xml ucf
-RUN echo "mariadb-server mysql-server/root_password password password" | debconf-set-selections
-RUN echo "mariadb-server mysql-server/root_password_again password password" | debconf-set-selections
-RUN apt-get update && apt-get install -y --no-install-recommends nginx openssl openssh-client php-fpm php-mysql php-ldap php-ssh2 wakeonlan sudo mariadb-server wget
-#RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends nginx openssl openssh-client sudo mariadb-client ca-certificates iputils-ping python3 python3-ldap3 python3-flask python3-requests python3-passlib python3-bcrypt python3-pip python3-setuptools python3-flask-login python3-schedule python3-pexpect python3-paramiko python3-scp
+RUN pip3 install Flask-Session mysql-connector
+RUN apt-get purge -y python3-pip python3-setuptools
+RUN apt-get autoremove -y
 
-COPY setup.sh /root/
+COPY db.sql /
+COPY content_initial.sql /
 COPY default /etc/nginx/sites-enabled/
-COPY privkey.pem /etc/nginx/
-COPY cacert.pem /etc/nginx/
-ADD Rechnerverwaltung /var/www/html
-RUN chown -R www-data /var/www/html/
-RUN echo "www-data ALL=NOPASSWD: /usr/bin/wakeonlan" >> /etc/sudoers
-# TODO: choose a better way for this:
-RUN echo "www-data ALL=NOPASSWD: /bin/chmod, /bin/chown" >> /etc/sudoers
+COPY scripts/* /usr/local/bin/
 
-COPY htaccess /
+RUN mkdir /usr/local/bin/api
+ADD api /usr/local/bin/api
+
+RUN chmod +x /usr/local/bin/dirpermissions.py
+RUN chmod -R +x /usr/local/bin/api
+
+ADD ui /var/www/html
+RUN chown -R www-data /var/www/html/
+
+RUN mkdir /etc/pc_admin
+COPY config.txt /etc/pc_admin/
+
+RUN mkdir /etc/pc_admin/ipfire
+COPY ipfire/config /etc/pc_admin/ipfire/
+
+RUN echo "www-data ALL=NOPASSWD: /usr/local/bin/dirpermissions.py" >> /etc/sudoers
+
+COPY protocols /etc/
 
 EXPOSE 80
+EXPOSE 443
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
-#CMD ["nginx", "-g", "daemon off;"]
 CMD ["./entrypoint.sh"]

@@ -61,28 +61,32 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         newconf.append("# begin ExchangeFolders; DON'T CHANGE MANUALLY!\n")
         j = json.loads(data)
         for d in j:
+            error = False
+            if not d['name'] or not d['path'] or not d['users']:
+                raise InputError('not all values are declared, please reconfigure samba-folders (might be in inconsistent state at the moment)')
+            if len(d['users']) <= 0:
+                continue
             newconf.append('['+d['name']+']\n')
             newconf.append('    path = '+d['path']+'\n')
-            error = False
-            if d['writeable']:
-                newconf.append('    writeable = yes\n')
-                newconf.append('    create mask = 0666\n')
-                newconf.append('    directory mask = 0777\n')
-            elif not d['writeable']:
-                newconf.append('    writeable = no\n')
-            else:
-                error = True
-            if d['teachers'] and d['students']:
-                # no new line needed, but config is valid
-                pass
-            elif d['teachers'] and not d['students']:
-                newconf.append('    valid users = @teachers\n')
-            elif not (d['teachers']) and (d['students']):
-                newconf.append('    valid users = @students\n')
-            else:
-                error = True
-            if error:
-                raise InputError('not all values are declared, please reconfigure samba-folders (might be in inconsistent state at the moment)')
+            first = True
+            line = ""
+            for u in d['users']:
+                if first:
+                    line += "    valid users = @" + u
+                    first = False
+                else:
+                    line += " @" + u
+            newconf.append(line + '\n')
+            if d['write'] and len(d['write']) > 0:
+                first = True
+                line = ""
+                for w in d['write']:
+                    if first:
+                        line += "    write list = @" + w
+                        first = False
+                    else:
+                        line += " @" + w
+                newconf.append(line + '\n')
         newconf.append("# end ExchangeFolders; DON'T CHANGE MANUALLY!\n")
         # delete old config:
         old = open(conffile, 'r')

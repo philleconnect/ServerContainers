@@ -1,55 +1,64 @@
 #!/bin/bash
 
-#chown -R mysql:mysql /var/lib/mysql
+# Function for a clean shutdown of the container
+function shutdown {
+    kill -TERM "$NGINX_PROCESS" 2>/dev/null
+    exit
+}
+trap shutdown SIGTERM
+
 chmod 0777 /home
 chmod 0777 /home/*
 
-# start services:
-service mysql start
-service php7.0-fpm start
-#echo "create database databasename" | mysql -u root --password=password
-#mysql -u root --password=password databasename < /var/www/html/Rechnerverwaltung/philleconnect-structure.sql
-#rm /var/www/html/Rechnerverwaltung/philleconnect-structure.sql
-
-# init database
-echo "create database sql_database;" | mysql -u root --password=$MYSQL_PASSWORD
-echo "CREATE USER 'sql_user'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';" | mysql -u root --password=$MYSQL_PASSWORD
-echo "grant all privileges on sql_database.* to 'sql_user'@'localhost';" | mysql -u root --password=$MYSQL_PASSWORD
-
 # prepare setup as far as possible and run it if config is still empty:
-sed -i "s|sql_password|$MYSQL_PASSWORD|g" /var/www/html/setup/database.php
-sed -i "s|ldap_url|ldap|g" /var/www/html/setup/ldap.php
-sed -i "s|ldap_password|$SLAPD_PASSWORD|g" /var/www/html/setup/ldap.php
-sed -i "s|ldap_basedn|dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0|g" /var/www/html/setup/ldap.php
-sed -i "s|ldap_admindn|cn=admin|g" /var/www/html/setup/ldap.php
-sed -i "s|samba_hostname|PHILLECONNECT|g" /var/www/html/setup/ldap.php
-# TODO: The following would be much nicer to be done via commandline-php, but needs changes in the php-code:
-sed -i "s|sql_password|$MYSQL_PASSWORD|g" /root/setup.sh
-sed -i "s|ldap_password|$SLAPD_PASSWORD|g" /root/setup.sh
-sed -i "s|ldap_basedn|dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0|g" /root/setup.sh
-echo $HOST_NETWORK_ADRESS > /var/www/host.txt
-service nginx start
-if [ $(cat /var/www/html/config/config.txt) = "empty" ]
+if [ ! -f "/etc/pc_admin/.DatabaseSetupDone" ]
 then
-    /root/setup.sh
+    while ! mysqladmin ping -h"main_db" --silent; do
+        sleep 1
+    done
+    mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h main_db schoolconnect < db.sql
+    mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h main_db schoolconnect < content_initial.sql
+    touch /etc/pc_admin/.DatabaseSetupDone
 fi
-service nginx stop
 
-#openssl genrsa -out /etc/nginx/privkey.pem 2048
-#openssl req -new -x509 -key /etc/nginx/privkey.pem -out /etc/nginx/cacert.pem -days 36500
-# TODO: generate keys on build as soon as we are going stable
+while ! ping -c 1 -n -w 1 ldap &> /dev/null; do
+    sleep 1
+done
+while ! ping -c 1 -n -w 1 samba &> /dev/null; do
+    sleep 1
+done
+
+# Write the servermanager API key to a permanent file
+echo $APIKEY > /etc/pc_admin/apikey.txt
+
+# Write the shared secret of the management apis to a permanent file
+echo $MANAGEMENT_APIS_SHARED_SECRET > /etc/pc_admin/managementsecret.txt
+
+# generate https key and certificate
+if [ ! -f /etc/pc_admin/privkey.pem ]; then
+    openssl genrsa -out /etc/pc_admin/privkey.pem 2048
+    openssl req -new -x509 -key /etc/pc_admin/privkey.pem -out /etc/pc_admin/cacert.pem -days 36500 -subj "/C=DE/ST=Germany/L=Germany/O=SchoolConnect/OU=Schulserver/CN=example.com"
+fi
+cp /etc/pc_admin/privkey.pem /etc/nginx/privkey.pem
+cp /etc/pc_admin/cacert.pem /etc/nginx/cacert.pem
 
 # generate new rsa-key to connect to ipfire via ssh (only if not exists):
-if [ ! -f /var/www/html/config/id_rsa ]; then
-    ssh-keygen -t rsa -N "" -f /var/www/html/config/id_rsa
+if [ ! -f /etc/pc_admin/id_rsa ]; then
+    ssh-keygen -t rsa -N "" -f /etc/pc_admin/id_rsa
 fi
-chmod =400 /var/www/html/config/id_rsa
-mv -f /htaccess /var/www/html/config/.htaccess
+chmod =400 /etc/pc_admin/id_rsa
 
-sed -i "s|root|philleconnect|g" /var/www/html/config/id_rsa.pub
+sed -i "s|root|schoolconnect|g" /etc/pc_admin/id_rsa.pub
 # TODO: make the pub key downloadable from GUI
 
 #==============================================
 
+echo "waiting for database..."
+while ! mysqladmin ping -h"main_db" --silent; do
+    sleep 1
+done
 echo 'everything is prepared, starting server for pc_admin'
-nginx -g 'daemon off;'
+python3 /usr/local/bin/api/main.py &
+nginx -g 'daemon off;' &
+NGINX_PROCESS=$!
+wait $NGINX_PROCESS

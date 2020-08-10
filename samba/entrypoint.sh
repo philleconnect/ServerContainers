@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Function for a clean shutdown of the container
+function shutdown {
+    kill -TERM "$MANAGER_PROCESS" 2>/dev/null
+    exit
+}
+trap shutdown SIGTERM
+
+sleep 60
+
 # check if environment variables are set with -e option:
 if [[ -z "$SLAPD_PASSWORD" ]]; then
         echo -n >&2 "Error: Container not configured and SLAPD_PASSWORD not set. "
@@ -22,7 +31,10 @@ if [[ -z "$SLAPD_ORGANIZATION" ]]; then
         SLAPD_ORGANIZATION='My School'
 fi
 
-#sleep 100
+# Wait til ldap is up and running
+while ! ping -c 1 -n -w 1 ldap &> /dev/null; do
+    sleep 1
+done
 
 # -------------------------------
 # setup the connection to sldapd:
@@ -53,15 +65,14 @@ sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /root/libnss-ldap.conf
 cp -f /root/libnss-ldap.conf /etc/
 
 sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap_bind.conf
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap_bind.conf 
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap_bind.conf
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap_bind.conf
 
 sed -i "s|SLAPD_PASSWORD|$SLAPD_PASSWORD|g" /etc/smbldap-tools/smbldap.conf
-sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf 
+sed -i "s|SLAPD_DOMAIN0|$SLAPD_DOMAIN0|g" /etc/smbldap-tools/smbldap.conf
 sed -i "s|SLAPD_DOMAIN1|$SLAPD_DOMAIN1|g" /etc/smbldap-tools/smbldap.conf
 
 smbldap-populate -u 10000 -g 10000
-#smbldap-passwd root -p $SLAPD_PASSWORD
 
 # ----------------
 # configure samba:
@@ -72,7 +83,6 @@ sed -i "s/SLAPD_DOMAIN0/$SLAPD_DOMAIN0/g" /root/smbconfadd
 sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
 
 cp -f /root/smb.conf.tpl /etc/samba/smb.conf
-#cat /root/smbFolders >> /etc/samba/smb.conf
 sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
 sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
@@ -88,16 +98,11 @@ smbpasswd -w $SLAPD_PASSWORD
 echo "adding groups to samba..."
 service nmbd start
 service smbd start
-smbldap-groupadd -a teachers
-smbldap-groupadd -a students
-#service smbd stop
-#add users to groups:
-#smbldap-useradd -a testuser
+smbldap-groupadd -a scsystem
 
 #=======================================================
 
 echo "configuration finished, starting now..."
-#service smbd stop
-#smbd -F
-#while true; do sleep 1; done # hack to keep the docker running...
-python3 /root/smbFoldersChanger.py
+python3 /root/smbFoldersChanger.py &
+MANAGER_PROCESS=$!
+wait $MANAGER_PROCESS

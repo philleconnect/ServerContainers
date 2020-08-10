@@ -10,7 +10,7 @@ USER root
 
 #RUN apt-get update
 # apt-get update &&
-RUN apt-get update && apt-get install -y --no-install-recommends libnss-ldap libpam-ldap samba smbldap-tools python3
+RUN apt-get update && apt-get install -y --no-install-recommends libnss-ldap libpam-ldap samba smbldap-tools python3 iputils-ping
 # dpkg-dev
 
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
