@@ -30,7 +30,12 @@
             "name":"ldap",
             "hostname":"ldap",
             "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.0.2/ldap.tar.gz",
-            "ports":[],
+            "ports":[
+                {
+                    "external":389,
+                    "internal":389
+                }
+            ],
             "networks":[
                 {
                     "name":"ldap-net"
