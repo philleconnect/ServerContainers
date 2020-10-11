@@ -21,10 +21,26 @@ then
     touch /etc/pc_admin/.DatabaseSetupDone
 fi
 
+# Wait for ldap container to be up and running
 while ! ping -c 1 -n -w 1 ldap &> /dev/null; do
     sleep 1
 done
+
+# Wait for samba container to be up and running
 while ! ping -c 1 -n -w 1 samba &> /dev/null; do
+    sleep 1
+done
+
+# Wait for ldap server to be accessible
+function testLdap {
+    (ldapsearch -x -LLL -h ldap -D "cn=admin" -w $SLAPD_PASSWORD -b"dc=$SLAPD_DOMAIN1,dc=$SLAPD_DOMAIN0" -s sub "(objectClass=user)" givenName &> /dev/null)
+    if [ $? -gt 254 ]; then
+        echo -1
+    else
+        echo 0
+    fi
+}
+while [ $(testLdap) -eq -1 ]; do
     sleep 1
 done
 
