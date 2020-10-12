@@ -75,7 +75,9 @@ while ! mysqladmin ping -h"main_db" --silent; do
 done
 echo 'everything is prepared, starting server for pc_admin'
 python3 /usr/local/bin/api/integritycheckProcess.py &
-uwsgi --ini /usr/local/bin/api/api.ini --lazy &
+cd /usr/local/bin/api
+uwsgi --ini api.ini --lazy &
+cd
 nginx -g 'daemon off;' &
 NGINX_PROCESS=$!
 wait $NGINX_PROCESS
