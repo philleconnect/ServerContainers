@@ -42,9 +42,9 @@ done
 
 echo "setting up connection to slapd..."
 # TODO: Besser machen: nur Anfang der Zeile mit sed parsen, dann ganze Zeile ersetzen
-sed -i "s|passwd:         compat|passwd:         compat ldap|g" /etc/nsswitch.conf
-sed -i "s|group:          compat|group:          compat ldap|g" /etc/nsswitch.conf
-sed -i "s|shadow:         compat|shadow:         compat ldap|g" /etc/nsswitch.conf
+sed -i "s|passwd:         files|passwd:         compat ldap|g" /etc/nsswitch.conf
+sed -i "s|group:          files|group:          compat ldap|g" /etc/nsswitch.conf
+sed -i "s|shadow:         files|shadow:         compat ldap|g" /etc/nsswitch.conf
 
 sed -i "s/password\t\[success=1 user_unknown=ignore default=die\]\tpam_ldap\.so use_authtok try_first_pass/password\t\[success=1 user_unknown=ignore default=die\]\tpam_ldap\.so try_first_pass/g" /etc/pam.d/common-password
 
@@ -84,7 +84,7 @@ sed -i "s/SLAPD_DOMAIN1/$SLAPD_DOMAIN1/g" /root/smbconfadd
 
 cp -f /root/smb.conf.tpl /etc/samba/smb.conf
 sed -i '/\[global\]/a security = user' /etc/samba/smb.conf
-sed -i 's/.*passdb backend =.*/# EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
+sed -i '/server role = standalone server/a # EDITED: ldap connection setup for samba:/g' /etc/samba/smb.conf
 sed -i '/# EDITED: ldap connection setup for samba:/ r /root/smbconfadd' /etc/samba/smb.conf
 sed -i 's/   read only = yes/   read only = no/g' /etc/samba/smb.conf
 sed -i 's/   create mask = 0700/   create mask = 0777/g' /etc/samba/smb.conf
