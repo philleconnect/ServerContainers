@@ -20,6 +20,8 @@ INSERT INTO permission (name, info, detail) VALUES ("Nutzerverwaltung", "Zugriff
 INSERT INTO permission (name, info, detail) VALUES ("Geräteverwaltung", "Zugriff auf die Geräteverwaltungs-Funktionen der Administrator-GUI.", "devimgmt");
 INSERT INTO permission (name, info, detail) VALUES ("Serververwaltung", "Zugriff auf die Serververwaltungs-Funktionen der Administrator-GUI.", "servmgmt");
 INSERT INTO permission (name, info, detail) VALUES ("Passwort zurücksetzen", "Lehrer dürfen Passwörter dieser Nutzer zurücksetzen", "pwalwrst");
+INSERT INTO permission (name, info, detail) VALUES ("Passwort selbst zurücksetzen", "Nutzer kann sein Passwort selbst zurücksetzen, wenn eine E-Mail Adresse eingetragen ist.", "emailrst");
+INSERT INTO permission (name, info, detail) VALUES ("Gruppenlisten einsehen", "Nutzer kann für all seine Gruppen eine Liste der Mitglieder einsehen und laden.", "grouplst");
 
 -- connect permissions with groups
 INSERT INTO groups_has_permission (group_id, permission_id) VALUES (1, 1);
