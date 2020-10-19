@@ -44,6 +44,19 @@ while [ $(testLdap) -eq -1 ]; do
     sleep 1
 done
 
+# Wait for samba manager to be accessible
+function testSamba {
+    (curl http://samba:8000 &> /dev/null)
+    if [ $? -gt 0 ]; then
+        echo -1
+    else
+        echo 0
+    fi
+}
+while [ $(testSamba) -eq -1 ]; do
+    sleep 1
+done
+
 # Write the servermanager API key to a permanent file
 echo $APIKEY > /etc/pc_admin/apikey.txt
 
