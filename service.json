@@ -29,7 +29,7 @@
         {
             "name":"ldap",
             "hostname":"ldap",
-            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.0.102/ldap.tar.gz",
+            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.1.0/ldap.tar.gz",
             "ports":[
                 {
                     "external":389,
@@ -60,7 +60,7 @@
         {
             "name":"samba",
             "hostname":"samba",
-            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.0.102/samba.tar.gz",
+            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.1.0/samba.tar.gz",
             "ports":[
                 {
                     "external":137,
@@ -98,7 +98,7 @@
         {
             "name":"pc_admin",
             "hostname":"pc_admin",
-            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.0.102/pc_admin.tar.gz",
+            "url":"https://github.com/philleconnect/ServerContainers/releases/download/2.1.0/pc_admin.tar.gz",
             "ports":[
                 {
                     "external":84,
