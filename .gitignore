@@ -142,3 +142,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# Compiled stuff
+ui/www
+pc_admin/ui
+ldap.tar.gz
+samba.tar.gz
+pc_admin.tar.gz
