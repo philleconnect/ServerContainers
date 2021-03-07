@@ -99,7 +99,7 @@ export default {
             title: "Aktualisierung läuft",
             allowEscapeKey: false,
             allowOutsideClick: false,
-            onOpen: function() {
+            didOpen: function() {
               Swal.showLoading();
               this.pendingChecker();
             }.bind(this)
@@ -128,7 +128,7 @@ export default {
             title: "Aktualisierung läuft",
             allowEscapeKey: false,
             allowOutsideClick: false,
-            onOpen: function() {
+            didOpen: function() {
               Swal.showLoading();
               this.pendingChecker();
             }.bind(this)
