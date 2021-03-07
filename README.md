@@ -23,6 +23,34 @@ PhilleConnect is designed to be used in schools with the two usergroups "Teacher
 
 # How can I use this?
 
+This section was outdated and will get updated.
+
+# Development
+
+## Requirements
+- Node.js
+- npm
+- Python 3
+
+## Frontend
+All frontend code is located at `/ui`.
+
+To setup your development environment, go tu `/ui` and run `npm install`. Then use one of the following commands.
+
+### NPM Scripts
+
+* 🔥 `start` - run development server
+* 🔧 `build-prod` - build web app for production
+
+Warning: The admin-frontend is still based on Framework7 version 5, while the self service already uses version 6.
+
+## Backend
+The backend code is located at `/pc_admin/api`.
+
+## Releasing
+You'll have to use the `createRelease.sh` script to create a release. It will compile the frontend, and package the archives.
+
+<!---
 * Install a Linux-System to act as the Server, for example Ubuntu 18.04 (this will work for the commands below, but works on others like debian as well if you "translate" the description below to your system)
 * Type `sudo apt install docker docker-compose git` to the command line. Then you have your docker host.
 * Type `git clone http://github.com/philleconnect/ServerContainers/` to get all you need to make your system build your server.
@@ -45,3 +73,4 @@ PhilleConnect is designed to be used in schools with the two usergroups "Teacher
 (you can also just remove one of those if you like, enjoy playing around - you can't destroy anything!)
 after a `docker-compose down` and you'll find a fresh install after the next `docker-compose up --build`
 Maybe I got you fixed to docker by now, have fun with it!
+--->
