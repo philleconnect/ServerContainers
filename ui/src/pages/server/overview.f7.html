@@ -94,6 +94,7 @@ export default {
           var status = "<i class=\"f7-icons\" style=\"color: red;\">xmark_circle_fill</i>";
           var runAction = "";
         }
+        let rebuildAction = "<a href=\"#\" data-name=\"" + service.name + "\" class=\"rebuild-service\"><i class=\"f7-icons\">arrow_2_circlepath_circle_fill</i></a>";
         runAction += "<a href=\"#\" data-name=\"" + service.name + "\" class=\"delete-service\"><i class=\"f7-icons\">trash_fill</i></a>";
         if (service.wanted) {
           var setting = "Aktiviert";
@@ -108,11 +109,11 @@ export default {
         if (service.type == "essential") {
           let style = tableStyle ? "<tr class=\"alt\">" : "<tr>";
           tableStyle = !tableStyle;
-          tableContent += style + "<td id=\"status_" + service.name + "\">" + status + "</td><td>" + service.name + "</td><td>" + service.version + previous + "</td><td>" + setting + "</td><td id=\"update_" + service.name + "\">Prüfung läuft...</td><td></td></tr>";
+          tableContent += style + "<td id=\"status_" + service.name + "\">" + status + "</td><td>" + service.name + "</td><td>" + service.version + previous + "</td><td>" + setting + "</td><td id=\"update_" + service.name + "\">Prüfung läuft...</td><td>" + rebuildAction + "</td></tr>";
         } else {
           let style = pluginStyle ? "<tr class=\"alt\">" : "<tr>";
           pluginStyle = !pluginStyle;
-          pluginContent += style + "<td id=\"status_" + service.name + "\">" + status + "</td><td>" + service.name + "</td><td>" + service.version + previous + "</td><td>" + setting + "</td><td id=\"update_" + service.name + "\">Prüfung läuft...</td><td>" + runAction + "</td></tr>";
+          pluginContent += style + "<td id=\"status_" + service.name + "\">" + status + "</td><td>" + service.name + "</td><td>" + service.version + previous + "</td><td>" + setting + "</td><td id=\"update_" + service.name + "\">Prüfung läuft...</td><td>" + runAction + rebuildAction + "</td></tr>";
         }
       }
       for (const service of services) {
@@ -138,6 +139,11 @@ export default {
       for (const element of document.getElementsByClassName("revert-service")) {
         element.addEventListener("click", function(e) {
           this.revertService(e.target.dataset.name);
+        }.bind(this));
+      }
+      for (const element of document.getElementsByClassName("rebuild-service")) {
+        element.addEventListener("click", function(e) {
+          this.rebuildService(e.target.parentElement.dataset.name);
         }.bind(this));
       }
       this.checkManager();
@@ -286,7 +292,7 @@ export default {
                 Swal.fire({
                   title: "Es ist ein interner Fehler aufgetreten.",
                   text: "Bitte erneut versuchen. Der Fehlercode lautet '" + response.error + "'.",
-                  type: "error"
+                  icon: "error"
                 })
               } else if (response.result == "running") {
                 this.revertPendingChecker(name);
@@ -294,7 +300,7 @@ export default {
                 Swal.fire({
                   title: "Es ist ein unbekannter Fehler aufgetreten.",
                   text: "Bitte erneut versuchen.",
-                  type: "error"
+                  icon: "error"
                 })
               }
             }.bind(this));
@@ -328,6 +334,73 @@ export default {
             Swal.fire({
               title: "Es ist ein Fehler aufgetreten.",
               text: "'" + name  + "' konnte nicht auf die vorherige Version zurückgesetzt werden.",
+              icon: "error"
+            })
+          }
+        }
+      }.bind(this))
+    },
+    rebuildService: function(name) {
+      Swal.fire({
+        title: "Service wirklich neu installieren?",
+        text: "Dadurch werden alle Programmbestandteile ersetzt. Es werden jedoch keine Einstellungen oder Benutzerdaten geändert.",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: 'Abbrechen',
+        confirmButtonText: 'Neu installieren',
+        showLoaderOnConfirm: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        preConfirm: function() {
+          return new Promise(function(resolve) {
+            api.send("/api/servermanager", "POST", {url: "/rebuild", data: JSON.stringify({service: name})}).then(function(response) {
+              response = JSON.parse(response);
+              if (response.error) {
+                Swal.fire({
+                  title: "Es ist ein interner Fehler aufgetreten.",
+                  text: "Bitte erneut versuchen. Der Fehlercode lautet '" + response.error + "'.",
+                  icon: "error"
+                })
+              } else if (response.result == "running") {
+                this.rebuildPendingChecker(name);
+              } else {
+                Swal.fire({
+                  title: "Es ist ein unbekannter Fehler aufgetreten.",
+                  text: "Bitte erneut versuchen.",
+                  icon: "error"
+                })
+              }
+            }.bind(this));
+          }.bind(this))
+        }.bind(this)
+      })
+    },
+    rebuildPendingChecker: function(name) {
+      api.send("/api/servermanager", "POST", {url: "/actionstatus", data: JSON.stringify({service: name})}, true).then(function(response) {
+        if (response.status == 401) { // No auth after core revert
+          Swal.fire({
+            title: "Core erfolgreich neu installiert.",
+            icon: "success",
+          }).then(function() {
+            window.location.reload();
+          })
+        } else if (response.status != 200) {
+          setTimeout(function() {this.rebuildPendingChecker(name);}.bind(this), 2000);
+        } else {
+          response = JSON.parse(response.responseText);
+          if (response.result == "installing") {
+            setTimeout(function() {this.rebuildPendingChecker(name);}.bind(this), 2000);
+          } else if (response.result == "running" || response.result == "paused") {
+            Swal.fire({
+              title: "Service '" + name + "' wurde erfolgreich neu installiert.",
+              icon: "success"
+            }).then(function() {
+              this.get();
+            }.bind(this))
+          } else {
+            Swal.fire({
+              title: "Es ist ein Fehler aufgetreten.",
+              text: "'" + name  + "' konnte nicht neu installiert werden.",
               icon: "error"
             })
           }
