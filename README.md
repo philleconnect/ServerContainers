@@ -19,7 +19,7 @@ PhilleConnect is an all-new open-source next generation school network solution.
 
 # Who can use this?
 
-PhilleConnect is designed to be used in schools with the two usergroups "Teachers" and "Students". If your screnario might match this situation, just give it a try!
+PhilleConnect is designed to be used in schools with multiple user groups. If your screnario might match this situation, just give it a try!
 
 # How can I use this?
 
