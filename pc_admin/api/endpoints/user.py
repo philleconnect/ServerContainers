@@ -50,7 +50,10 @@ def specificUser(id):
             user["autogenPassword"] = autogenPassword["cleartext"]
         return jsonify(user), 200
     elif request.method == "PUT":
-        dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, short = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), request.form.get("short"), request.form.get("birthdate"), request.form.get("sex"), request.form.get("persistant"), id))
+        if request.form.get("short") == "":
+            dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), request.form.get("birthdate"), request.form.get("sex"), request.form.get("persistant"), id))
+        else:
+            dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, short = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), request.form.get("short"), request.form.get("birthdate"), request.form.get("sex"), request.form.get("persistant"), id))
         if not dbconn.commit():
             return "ERR_DATABASE_ERROR", 500
         if not lu.update(id) == 0:
