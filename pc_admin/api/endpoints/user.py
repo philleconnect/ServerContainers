@@ -50,10 +50,9 @@ def specificUser(id):
             user["autogenPassword"] = autogenPassword["cleartext"]
         return jsonify(user), 200
     elif request.method == "PUT":
-        if request.form.get("short") == "":
-            dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), request.form.get("birthdate"), request.form.get("sex"), request.form.get("persistant"), id))
-        else:
-            dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, short = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), request.form.get("short"), request.form.get("birthdate"), request.form.get("sex"), request.form.get("persistant"), id))
+        short = request.form.get("short") if not request.form.get("short") == "" and not request.form.get("short").lower() == "null" else None
+        sex = request.form.get("sex") if isinstance(request.form.get("sex"), int) else 0
+        dbconn.execute("UPDATE people SET firstname = %s, lastname = %s, email = %s, title = %s, short = %s, birthdate = %s, sex = %s, persistant = %s WHERE id = %s", (request.form.get("firstname"), request.form.get("lastname"), request.form.get("email"), request.form.get("title"), short, request.form.get("birthdate"), sex, request.form.get("persistant"), id))
         if not dbconn.commit():
             return "ERR_DATABASE_ERROR", 500
         if not lu.update(id) == 0:
@@ -98,10 +97,11 @@ def createUser():
     id = idsrv.getNew()
     if not request.form.get("password") == request.form.get("password2"):
         return "ERR_PASSWORDS_DIFFERENT", 500
-    short = request.form.get("short") if not request.form.get("short") == "" else None
+    short = request.form.get("short") if not request.form.get("short") == "" and not request.form.get("short").lower() == "null" else None
     persistant = 1 if request.form.get("persistant") else 0
     smb_homedir = "/home/users/" + request.form.get("username")
-    dbconn.execute("INSERT INTO people (id, firstname, lastname, preferredname, sex, title, short, email, birthdate, username, smb_homedir, persistant) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (id, request.form.get("firstname"), request.form.get("lastname"), request.form.get("preferredname"), request.form.get("sex"), request.form.get("title"), short, request.form.get("email"), request.form.get("birthdate"), request.form.get("username"), smb_homedir, persistant))
+    sex = request.form.get("sex") if isinstance(request.form.get("sex"), int) else 0
+    dbconn.execute("INSERT INTO people (id, firstname, lastname, preferredname, sex, title, short, email, birthdate, username, smb_homedir, persistant) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (id, request.form.get("firstname"), request.form.get("lastname"), request.form.get("preferredname"), sex, request.form.get("title"), short, request.form.get("email"), request.form.get("birthdate"), request.form.get("username"), smb_homedir, persistant))
     if not dbconn.commit():
         return "ERR_DATABASE_ERROR", 500
     if not request.form.get("cleartext") is None:
