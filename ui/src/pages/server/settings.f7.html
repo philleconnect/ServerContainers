@@ -42,7 +42,7 @@ export default {
           style = !style;
           var input = "";
           if (value["mutable"]) {
-            input = "<input type=\"text\" value=\"" + value["value"] + "\" id=\"" + key + "\"/>";
+            input = "<input type=\"text\" value='" + value["value"] + "' id=\"" + key + "\"/>";
           } else {
             input = value["value"];
           }
