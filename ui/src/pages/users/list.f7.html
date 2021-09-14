@@ -10,6 +10,7 @@
             <th>Name</th>
             <th>Geburtsdatum</th>
             <th>E-Mail Addresse</th>
+            <th>Dauerhaft</th>
             <th>Aktionen</th>
           </tr>
         </thead>
@@ -34,8 +35,8 @@ export default {
       preloader.toggle('LADEN');
       api.send("/api/users", "GET", {}).then(function(response) {
         preloader.toggle();
-        users = JSON.parse(response).sort((a, b) => (a["username"] > b["username"]) ? 1 : -1);
-        this.print()
+        users = JSON.parse(response).sort((a, b) => (a["username"] > b["username"]) ? 1 : -1)
+        //this.print()
       }.bind(this));
     },
     print: function() {
@@ -50,7 +51,12 @@ export default {
           tableRow += "<tr>";
           style = true;
         }
-        tableRow += "<td>" + user["username"] + "</td><td>" + user["firstname"] + " " + user["lastname"] + "</td><td>" + essentials.minusIfNull(birthday.convertToGermanFormat(user["birthdate"])) + "</td><td>" + essentials.minusIfNull(user["email"]) + "</td><td><a href=\"#\" onclick=\"window.app.views.main.router.navigate('/users/" + user["id"] + "')\"><i class=\"f7-icons icon-default\">gear_alt_fill</i></a>&nbsp;&nbsp;&nbsp;<a href=\"#\" data-id=\"" + user["id"] + "\" class=\"delete-user\"><i class=\"f7-icons icon-default\">trash_fill</i></a></td></tr>";
+        tableRow += "<td>" + user["username"] + "</td>";
+        tableRow += "<td>" + user["firstname"] + " " + user["lastname"] + "</td>";
+        tableRow += "<td>" + essentials.minusIfNull(birthday.convertToGermanFormat(user["birthdate"])) + "</td>";
+        tableRow += "<td>" + essentials.minusIfNull(user["email"]) + "</td>";
+        tableRow += "<td>" + essentials.minusIfNull(user["persistant"]) + "</td>";
+        tableRow += "<td><a href=\"#\" onclick=\"window.app.views.main.router.navigate('/users/" + user["id"] + "')\"><i class=\"f7-icons icon-default\">gear_alt_fill</i></a>&nbsp;&nbsp;&nbsp;<a href=\"#\" data-id=\"" + user["id"] + "\" class=\"delete-user\"><i class=\"f7-icons icon-default\">trash_fill</i></a></td></tr>";
         document.getElementById("accounts").innerHTML += tableRow;
       }
       for (const element of document.getElementsByClassName("delete-user")) {
@@ -123,6 +129,7 @@ export default {
   on: {
     pageInit: function() {
       this.load();
+      this.print();
     }
   }
 };
