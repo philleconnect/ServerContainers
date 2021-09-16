@@ -42,13 +42,13 @@ export default {
     // Data display
     print: function() {
       document.getElementById("content").innerHTML = "";
+      var tableContent = "";
       let style = false;
       for (const group of groups) {
-        let tableRow = "";
         if (style) {
-          tableRow += "<tr class=\"alt\">";
+          tableContent += "<tr class=\"alt\">";
         } else {
-          tableRow += "<tr>";
+          tableContent += "<tr>";
         }
         style = !style;
         let permissions = "";
@@ -69,9 +69,9 @@ export default {
         if (group["type"] != 1) {
           modifyButton = '<a href="#" onclick="window.app.views.main.router.navigate(\'/groups/' + group["id"] + '\')"><i class="f7-icons icon-default">gear_alt_fill</i></a>';
         }
-        tableRow += '<td>' + group["name"] + '</td><td>' + group["info"] + '</td><td>' + group["type"] + '</td><td>' + permissions + '</td><td>' + modifyButton + deleteButton + '</td>';
-        document.getElementById("content").innerHTML += tableRow;
+        tableContent += '<td>' + group["name"] + '</td><td>' + group["info"] + '</td><td>' + group["type"] + '</td><td>' + permissions + '</td><td>' + modifyButton + deleteButton + '</td>';
       }
+      document.getElementById("content").innerHTML += tableContent;
       for (const element of document.getElementsByClassName("delete-group")) {
         element.addEventListener("click", function(e) {
           this.delete(parseInt(e.target.parentElement.dataset.id));
