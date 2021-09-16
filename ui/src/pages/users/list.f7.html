@@ -64,7 +64,11 @@ export default {
           this.delete(e.target.parentElement.dataset.id);
         }.bind(this));
       }
-      this.loadSearch();
+      try {
+        this.loadSearch();
+      } catch (error) {
+        console.error(error);
+      }
     },
     getUsernameForId: function(id) {
       for (const user of users) {
