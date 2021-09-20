@@ -97,7 +97,10 @@ def createUser():
     id = idsrv.getNew()
     if not request.form.get("password") == request.form.get("password2"):
         return "ERR_PASSWORDS_DIFFERENT", 500
-    short = request.form.get("short") if not request.form.get("short") == "" and not request.form.get("short").lower() == "null" else None
+    try:
+		short = request.form.get("short") if not request.form.get("short") == "" and not request.form.get("short").lower() == "null" else None
+	except AttributeError:
+		short = None
     persistant = 1 if request.form.get("persistant") else 0
     smb_homedir = "/home/users/" + request.form.get("username")
     sex = request.form.get("sex") if isinstance(request.form.get("sex"), int) else 0
