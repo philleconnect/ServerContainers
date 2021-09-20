@@ -64,11 +64,7 @@ export default {
           this.delete(e.target.parentElement.dataset.id);
         }.bind(this));
       }
-      try {
-        this.loadSearch();
-      } catch (error) {
-        console.error(error);
-      }
+      this.loadSearch();
     },
     getUsernameForId: function(id) {
       for (const user of users) {
@@ -124,7 +120,6 @@ export default {
         search.disable();
       }
       search = new tableSearch("users", {
-        col_4: "select",
         col_5: "none",
         clear_filter_text: "Alle anzeigen",
         sort_select: true
