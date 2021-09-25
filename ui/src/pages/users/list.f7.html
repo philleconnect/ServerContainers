@@ -40,8 +40,8 @@ export default {
       }.bind(this));
     },
     print: function() {
-      var accTable = document.getElementById("accounts").innerHTML;
-      accTable = "";
+      var accTable = document.getElementById("accounts");
+      accTable.innerHTML = "";
       var tableContent = "";
       let style = false;
       for (const user of users) {
@@ -59,7 +59,7 @@ export default {
         tableContent += "<td>" + essentials.minusIfNull(user["persistant"]) + "</td>";
         tableContent += "<td><a href=\"#\" onclick=\"window.app.views.main.router.navigate('/users/" + user["id"] + "')\"><i class=\"f7-icons icon-default\">gear_alt_fill</i></a>&nbsp;&nbsp;&nbsp;<a href=\"#\" data-id=\"" + user["id"] + "\" class=\"delete-user\"><i class=\"f7-icons icon-default\">trash_fill</i></a></td></tr>";
       }
-      accTable = tableContent;
+      accTable.innerHTML = tableContent;
       for (const element of document.getElementsByClassName("delete-user")) {
         element.addEventListener("click", function(e) {
           this.delete(e.target.parentElement.dataset.id);
