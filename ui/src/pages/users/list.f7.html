@@ -35,12 +35,13 @@ export default {
       preloader.toggle('LADEN');
       api.send("/api/users", "GET", {}).then(function(response) {
         preloader.toggle();
-        users = JSON.parse(response).sort((a, b) => (a["username"] > b["username"]) ? 1 : -1)
+        users = JSON.parse(response).sort((a, b) => (a["username"] > b["username"]) ? 1 : -1);
         this.print()
       }.bind(this));
     },
     print: function() {
       var accTable = document.getElementById("accounts").innerHTML;
+      accTable = "";
       var tableContent = "";
       let style = false;
       for (const user of users) {
