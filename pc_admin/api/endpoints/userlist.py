@@ -5,7 +5,7 @@
 # © 2020-2021 Johannes Kreutz, Dirk Winkel
 
 # Include dependencies
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_login import login_required
 
 from io import StringIO
@@ -49,29 +49,23 @@ def userListExport():
     if not es.isAuthorized("usermgmt"):
         return "ERR_ACCESS_DENIED", 403
     data = StringIO()
-    w = csv.writer(data)
+    w = csv.writer(data, delimiter =';', quotechar ='"', quoting=csv.QUOTE_MINIMAL)
+    w.writerow(('lastname', 'firstname', 'short', 'username', 'groups'))
     dbconn = db.database()
-    dbconn.execute("SELECT firstname, lastname, short, username FROM people")
-    w.writerow(('id', 'firstname', 'lastname', 'short', 'username', 'groups'))
-    yield data.getvalue()
-    data.seek(0)
-    data.truncate(0)
+    dbconn.execute("SELECT id, lastname, firstname, short, username FROM people")
     for user in dbconn.fetchall():
-        uid = user[0]
-        fn = user[1]
-        ln = user[2]
-        so = user[3]
-        un = user[4]
-        groups = '"'
+        groups = ''
         dbconn2 = db.database()
         dbconn2.execute("select name from groups where id in(select group_id from people_has_groups where people_id='"+uid+"' and type='3');")
-        for gname in dbconn2.fetchall():
-            groups=groups+';'+gname
-        groups=groups+'"'
-        w.writerow((fn, ln, so, un, groups))
-        yield data.getvalue()
-        data.seek(0)
-        data.truncate(0)
-    response = Response(generate(), mimetype='text/csv')
-    response.headers.set("Content-Disposition", "attachment", filename="userList.csv")
+        first = True
+        for g in dbconn2.fetchall():
+            if first:
+                first = False
+            else:
+                groups = groups+';'
+            groups=groups+g["name"]
+        w.writerow((user["lastname"], user["firstname"], user["short"], user["username"], groups))
+    response = make_response(data.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=userList.csv"
+    response.headers["Content-Type"] = "text/csv";
     return response
