@@ -120,7 +120,7 @@ def studentListExport():
         first = True
         for g in dbconn2.fetchall():
             if g['name'] == 'students':
-                teacher = True
+                student = True
             if g['type'] == 3:
                 if first:
                     first = False
