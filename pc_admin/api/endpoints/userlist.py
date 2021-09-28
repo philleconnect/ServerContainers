@@ -69,3 +69,33 @@ def userListExport():
     response.headers["Content-Disposition"] = "attachment; filename=userList.csv"
     response.headers["Content-Type"] = "text/csv";
     return response
+
+@userListApi.route("/api/teacherListExport", methods=["GET"])
+@login_required
+def teacherListExport():
+    if not es.isAuthorized("usermgmt"):
+        return "ERR_ACCESS_DENIED", 403
+    data = StringIO()
+    w = csv.writer(data, delimiter =';', quotechar ='"', quoting=csv.QUOTE_MINIMAL)
+    w.writerow(('lastname', 'firstname', 'short', 'username', 'groups'))
+    dbconn = db.database()
+    dbconn.execute("SELECT id, lastname, firstname, short, username FROM people")
+    for user in dbconn.fetchall():
+        groups = ''
+        dbconn2 = db.database()
+        dbconn2.execute("select name, type from groups where id in(select group_id from people_has_groups where people_id='"+user['id']+");")
+        if not 'teachers' in dbconn2.fetchall():
+            continue
+        first = True
+        for g in dbconn2.fetchall():
+            if g['type'] == '3':
+                if first:
+                    first = False
+                else:
+                    groups = groups+';'
+                groups=groups+g["name"]
+        w.writerow((user["lastname"], user["firstname"], user["short"], user["username"], groups))
+    response = make_response(data.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=userList.csv"
+    response.headers["Content-Type"] = "text/csv";
+    return response
