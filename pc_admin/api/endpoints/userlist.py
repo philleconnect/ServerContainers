@@ -56,7 +56,7 @@ def userListExport():
     for user in dbconn.fetchall():
         groups = ''
         dbconn2 = db.database()
-        dbconn2.execute("select name from groups where id in(select group_id from people_has_groups where people_id='"+uid+"' and type='3');")
+        dbconn2.execute("select name from groups where id in(select group_id from people_has_groups where people_id='"+user['id']+"' and type='3');")
         first = True
         for g in dbconn2.fetchall():
             if first:
