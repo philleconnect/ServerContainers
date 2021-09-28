@@ -45,7 +45,7 @@ def userCount():
 
 @userListApi.route("/api/userListExport", methods=["GET"])
 @login_required
-def userCount():
+def userListExport():
     if not es.isAuthorized("usermgmt"):
         return "ERR_ACCESS_DENIED", 403
     data = StringIO()
