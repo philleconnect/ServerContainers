@@ -84,17 +84,19 @@ def teacherListExport():
         groups = ''
         dbconn2 = db.database()
         dbconn2.execute("select name, type from groups where id in(select group_id from people_has_groups where people_id='"+user['id']+"');")
-        if not 'teachers' in dbconn2.fetchall():
-            continue
+        teacher = False
         first = True
         for g in dbconn2.fetchall():
-            if g['type'] == '3':
+            if g['name'] == 'teachers':
+                teacher = True
+            if g['type'] == 3:
                 if first:
                     first = False
                 else:
                     groups = groups+';'
                 groups=groups+g["name"]
-        w.writerow((user["lastname"], user["firstname"], user["short"], user["username"], groups))
+        if teacher:
+            w.writerow((user["lastname"], user["firstname"], user["short"], user["username"], groups))
     response = make_response(data.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=teacherList.csv"
     response.headers["Content-Type"] = "text/csv";
@@ -114,17 +116,19 @@ def studentListExport():
         groups = ''
         dbconn2 = db.database()
         dbconn2.execute("select name, type from groups where id in(select group_id from people_has_groups where people_id='"+user['id']+"');")
-        if not 'students' in dbconn2.fetchall():
-            continue
+        student = False
         first = True
         for g in dbconn2.fetchall():
-            if g['type'] == '3':
+            if g['name'] == 'students':
+                teacher = True
+            if g['type'] == 3:
                 if first:
                     first = False
                 else:
                     groups = groups+';'
                 groups=groups+g["name"]
-        w.writerow((user["lastname"], user["firstname"], user["username"], groups))
+        if student:
+            w.writerow((user["lastname"], user["firstname"], user["username"], groups))
     response = make_response(data.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=studentList.csv"
     response.headers["Content-Type"] = "text/csv";
