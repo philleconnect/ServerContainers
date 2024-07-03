@@ -1,6 +1,8 @@
+__Archived: Not actively maintained anymore!__
+
 # What ist this?
 
-PhilleConnect is an all-new open-source next generation school network solution.
+PhilleConnect is an open-source school network solution.
 
 ## Philosophy
 
